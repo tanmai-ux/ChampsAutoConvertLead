@@ -45,6 +45,13 @@ was Proposed, $1, TOS, closing 2026-11-30, with Principal Investigator set.
 Found and fixed: the scheduler test reused the real job name and failed whenever the hourly job was
 scheduled, which would have blocked production deploys. All tests (39 now) pass with the job scheduled.
 
+### Full re-run after the matching change (Nov 14, 2026, tag 82195)
+
+All scenarios re-run on fresh records with the final matcher (exact, alias, cleaned name, flow): **17 of 17
+checks passed**. S1–S12 and S20–S22 as above, plus checks that every converted Opportunity is Proposed,
+$1, 50% probability, TOS, closing 2026-11-30, created by API User with Principal Investigator set, and that
+S10's project numbers are unique (99959-100 / 99959-101).
+
 ## 4. Still to do
 
 - **S13 review email:** with deliverability back on *All email*, re-queue S4 and confirm the email arrives.

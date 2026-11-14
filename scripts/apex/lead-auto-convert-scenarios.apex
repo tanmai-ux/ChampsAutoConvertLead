@@ -18,7 +18,9 @@ Map<String, Account> accts = new Map<String, Account>{
     'reuse'        => new Account(Name = 'ACT Contact Reuse ' + tag, RecordTypeId = tosAcct, Account_Number__c = '99' + tag.right(2) + '6'),
     'conflict'     => new Account(Name = 'ACT Contact Conflict ' + tag, RecordTypeId = tosAcct, Account_Number__c = '99' + tag.right(2) + '7'),
     'conflictOther'=> new Account(Name = 'ACT Other Company ' + tag, RecordTypeId = tosAcct, Account_Number__c = '99' + tag.right(2) + '8'),
-    'shared'       => new Account(Name = 'ACT Shared ' + tag, RecordTypeId = tosAcct, Account_Number__c = '99' + tag.right(2) + '9')
+    'shared'       => new Account(Name = 'ACT Shared ' + tag, RecordTypeId = tosAcct, Account_Number__c = '99' + tag.right(2) + '9'),
+    'cleanTarget'  => new Account(Name = 'ACT Clean Target ' + tag, RecordTypeId = tosAcct, Account_Number__c = '98' + tag.right(2) + '1'),
+    'theTarget'    => new Account(Name = 'ACT The Target ' + tag, RecordTypeId = tosAcct, Account_Number__c = '98' + tag.right(2) + '2')
 };
 insert accts.values();
 
@@ -33,7 +35,8 @@ Lead[] leads = new Lead[]{};
 List<String> keys = new List<String>{
     'S1 name match', 'S2 flow match only', 'S3 name beats flow', 'S4 no match', 'S5 name matches non-TOS only',
     'S6 flow matched non-TOS', 'S7 queue-owned', 'S8 reuse contact', 'S9 contact on other account',
-    'S10a shared account', 'S10b shared account', 'S11 not MQL', 'S12 POS lead'
+    'S10a shared account', 'S10b shared account', 'S11 not MQL', 'S12 POS lead',
+    'S20 cleaned name', 'S21 alias', 'S22 The and LLC'
 };
 List<String[]> spec = new List<String[]>{
     // company, email, state, recordType, hubspot stage
@@ -49,7 +52,11 @@ List<String[]> spec = new List<String[]>{
     new String[]{ accts.get('shared').Name, 'act.s10a.' + tag + '@gmail.com', 'New York', 'TOS', 'MQL / Contact' },
     new String[]{ accts.get('shared').Name, 'act.s10b.' + tag + '@gmail.com', 'New York', 'TOS', 'MQL / Contact' },
     new String[]{ accts.get('nameMatch').Name, 'act.s11.' + tag + '@gmail.com', 'New York', 'TOS', null },
-    new String[]{ accts.get('nameMatch').Name, 'act.s12.' + tag + '@gmail.com', 'New York', 'POS', 'MQL / Contact' }
+    new String[]{ accts.get('nameMatch').Name, 'act.s12.' + tag + '@gmail.com', 'New York', 'POS', 'MQL / Contact' },
+    new String[]{ accts.get('cleanTarget').Name.toLowerCase() + ', Inc.', 'act.s20.' + tag + '@gmail.com', 'New York', 'TOS', 'MQL / Contact' },
+    // Uses the sandbox-only alias record "ACT Alias 89466" -> "ACT Flow Only 89466".
+    new String[]{ 'ACT ALIAS 89466', 'act.s21.' + tag + '@gmail.com', 'New York', 'TOS', 'MQL / Contact' },
+    new String[]{ 'The ' + accts.get('theTarget').Name + ' LLC', 'act.s22.' + tag + '@gmail.com', 'New York', 'TOS', 'MQL / Contact' }
 };
 for (Integer i = 0; i < spec.size(); i++) {
     String[] s = spec[i];
