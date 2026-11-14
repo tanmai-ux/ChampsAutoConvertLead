@@ -202,7 +202,7 @@ private class LeadAutoConvertServiceTest {
             Test.stopTest();
 
             Assert.areEqual(LeadAutoConvertTestData.REVIEW, reload(lead.Id).Status, 'Only TOS Accounts count');
-            Assert.isTrue(outcomes.get(lead.Id).message.contains('No TOS Account is named'), outcomes.get(lead.Id).message);
+            Assert.isTrue(outcomes.get(lead.Id).message.contains('No TOS Account matches'), outcomes.get(lead.Id).message);
             Assert.areEqual(0, [SELECT COUNT() FROM Opportunity WHERE AccountId = :hospital.Id], 'No Opportunity on a non-TOS Account');
         }
     }

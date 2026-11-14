@@ -63,6 +63,20 @@ public inherited sharing class LeadAutoConvertSelector {
         ];
     }
 
+    /**
+     * Candidates for cleaned-name matching: TOS Accounts whose Name starts with any of
+     * the patterns (for example "pfizer%"). Capped so a very common first word can't
+     * exhaust the query row limit.
+     */
+    public List<Account> getAccountsByNamePrefix(List<String> patterns, Set<String> recordTypes) {
+        return [
+            SELECT Id, Name, OwnerId, Owner.IsActive, RecordType.DeveloperName
+            FROM Account
+            WHERE Name LIKE :patterns AND RecordType.DeveloperName IN :recordTypes
+            LIMIT 2000
+        ];
+    }
+
     /** Oldest first, so the longest-standing Contact wins when an email repeats. */
     public List<Contact> getContactsByEmail(Set<String> emails) {
         return [

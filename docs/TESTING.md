@@ -2,7 +2,7 @@
 
 ## 1. Apex tests – done
 
-37 tests pass in champsDev. Coverage per class is 86–100%. They include 200-record bulk tests for matching,
+39 tests pass in champsDev. Coverage per class is 86–100%. They include 200-record bulk tests for matching,
 review, the queue action and the worker, plus rules such as name vs flow match, TOS-only, queue owner,
 Contact reuse/conflict, the close-date rule (year end, leap year), $1 / Proposed / Principal Investigator,
 failure retry and the off switch.
@@ -38,6 +38,10 @@ was Proposed, $1, TOS, closing 2026-11-30, with Principal Investigator set.
 | S17 | Forced failure on every run | Retries 10, 5, 2, 1, then review with the error; chain stopped after 5 retries (platform limit) |
 | S18 | Hourly safety net | 17:00 check picked up the Lead left waiting and sent it to review |
 | S19 | Manual re-queue | Fixed Lead set back to pending, converted by the 17:00 check (project number -102) |
+
+| S20 | Company "act name match 89466, Inc." | Converted onto ACT Name Match 89466 (cleaned name) |
+| S21 | Company "ACT ALIAS 89466" with a sandbox-only alias record | Converted onto ACT Flow Only 89466 (alias) |
+| S22 | Company "The ACT Contact Reuse 89466 LLC" | Converted onto ACT Contact Reuse 89466 (cleaned name) |
 
 Found and fixed: the scheduler test reused the real job name and failed whenever the hourly job was
 scheduled, which would have blocked production deploys. All 37 tests now pass with the job scheduled.

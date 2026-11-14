@@ -16,7 +16,8 @@ right existing Account, and sends anything it can't convert to the Lead owner fo
    *Auto-Convert Pending* and publishes a **Lead Auto Convert Request** platform event.
 4. The event's trigger runs as **API User** and starts one background job, which works through
    waiting Leads 10 at a time:
-   - **Account:** the one TOS Account whose Name equals the Lead's Company (ignoring case);
+   - **Account:** the one TOS Account matching the Lead's Company by exact name, then by an admin
+     alias, then by cleaned name (ignoring case, punctuation, "The" and Inc/LLC-style suffixes);
      otherwise the flow's Matched Account if it is a TOS Account; otherwise manual review.
    - **Owner:** the Lead owner; for queue-owned Leads, the Account owner.
    - **Opportunity:** TOS record type, stage Proposed, Amount $1, close date at the end of this
@@ -33,7 +34,8 @@ right existing Account, and sends anything it can't convert to the Lead owner fo
 | `objects/Lead_Auto_Convert_Request__e`, `triggers/LeadAutoConvertRequestTrigger`, `classes/LeadAutoConvertRequestHandler` | Start signal, so the job always runs as the configured user |
 | `classes/LeadAutoConvertWorker` | Queueable worker, chaining, failure retry (Transaction Finalizer) |
 | `classes/LeadAutoConvertService` | Conversion steps |
-| `classes/LeadAutoConvertAccountMatcher` | Account choice (name first, then flow match) |
+| `classes/LeadAutoConvertAccountMatcher` | Account choice (exact, alias, cleaned name, then flow match) |
+| `objects/Lead_Auto_Convert_Account_Alias__mdt` | Admin list of Company aliases, e.g. BMS → Bristol-Myers Squibb |
 | `classes/LeadAutoConvertSelector` | All SOQL |
 | `classes/LeadAutoConvertNotifier` | Review Task and email |
 | `classes/LeadAutoConvertScheduler` | Hourly safety net |
@@ -52,5 +54,5 @@ sf project deploy start -o <org> -d force-app --test-level RunSpecifiedTests \
   -t LeadAutoConvertServiceTest -t LeadAutoConvertWorkerTest -t LeadAutoConvertAccountMatcherTest
 ```
 
-37 Apex tests, including 200-record bulk tests. The sandbox scenario script is in
+39 Apex tests, including 200-record bulk tests. The sandbox scenario script is in
 `scripts/apex/lead-auto-convert-scenarios.apex`.

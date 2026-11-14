@@ -21,17 +21,27 @@ has committed. The worker re-reads the Lead from the database.
 
 ## Account matching
 
-1. `Lead.Company` equals `Account.Name` (exact, ignoring case) and exactly **one** Account of record
-   type **TOS** has that name → use it.
-2. Otherwise, the Lead's `Matched_Account__c` from Lead Assignment, if it is a TOS Account.
-3. Otherwise → manual review. This includes two TOS Accounts with the same name, name matches to non-TOS
-   Accounts only, and flow matches to deleted or non-TOS Accounts.
+Only Accounts of record type **TOS** count. The first step that applies wins:
+
+1. **Exact name:** `Lead.Company` equals `Account.Name` (ignoring case) for exactly one TOS Account.
+2. **Alias:** the Company is listed in **Lead Auto Convert Account Alias** (custom metadata, admin-maintained,
+   e.g. `BMS` → `Bristol-Myers Squibb NJ`) and that Account Name is exactly one TOS Account.
+3. **Cleaned name:** names match once case, punctuation, `&`/`and`, a leading "The" and trailing legal
+   suffixes (Inc, LLC, Ltd, Corp, Co, Company, plc, GmbH, AG, SA, NV, BV, Srl, Pty) are ignored, for
+   exactly one TOS Account. Done in Apex on candidates that start with the Company's first word, so no
+   Account field or data change is needed.
+4. **Lead Assignment's match:** the Lead's `Matched_Account__c`, if it is a TOS Account.
+5. Otherwise → manual review.
+
+A name step that finds more than one TOS Account is ambiguous: later name steps are skipped, and only the
+flow's match can still be used. Fuzzy matching is deliberately not used for automatic conversion.
 
 For multi-site companies (Pfizer, Bayer, Novartis) the **main Account** is preferred, which is why the
 name match runs first. No Account is ever created.
 
-Sandbox data at the time: an exact name match finds one TOS Account for about 42% of TOS Leads. Reps who
-converted by hand picked that Account 92% of the time. The flow alone matched about 7%.
+Sandbox data (8,833 TOS Leads): exact name matches 29.1%, cleaned names add 15.5% (44.5% total).
+Where reps had converted by hand they chose the same Account 96% (exact) and 84% (cleaned, 19 Leads) of
+the time. The flow alone matched about 7%.
 
 ## Owners
 
