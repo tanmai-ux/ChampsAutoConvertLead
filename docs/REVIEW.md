@@ -24,7 +24,7 @@
 | 3 | The planned "skip flagged records" condition on Lead Assignment would leave MQLs with no owner or match. | Do not add it. | Spencer |
 | 4 | Production deploys run as the Coastal Cloud user fail the org's existing tests (its Opportunity validation rule blocks them). | Deploy with RunSpecifiedTests (our three test classes), or as another admin. | Coastal |
 | 5 | `LeadStatus` and the TOS Lead Process are deployed as full lists from the July sandbox copy; production may differ. | Retrieve both from production first and merge in the two new values. | Coastal |
-| 6 | Review email delivery not yet proven (S13). | Switch sandbox email back on and re-run S4. | Coastal |
+| 6 | ~~Review email delivery not yet proven (S13).~~ **Done:** delivered to the project lead's inbox via Review Email CC. | — | — |
 
 ### Should do (best practice)
 

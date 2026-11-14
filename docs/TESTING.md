@@ -45,6 +45,11 @@ was Proposed, $1, TOS, closing 2026-11-30, with Principal Investigator set.
 Found and fixed: the scheduler test reused the real job name and failed whenever the hourly job was
 scheduled, which would have blocked production deploys. All tests (39 now) pass with the job scheduled.
 
+### S13 – review email delivered
+
+Confirmed by the project lead: a review email arrived in their inbox through the **Review Email CC**
+setting (sandbox users' own addresses end in `.invalid`, so the CC is how delivery is proven).
+
 ### Full re-run after the matching change (Nov 14, 2026, tag 82195)
 
 All scenarios re-run on fresh records with the final matcher (exact, alias, cleaned name, flow): **17 of 17
@@ -54,7 +59,6 @@ S10's project numbers are unique (99959-100 / 99959-101).
 
 ## 4. Still to do
 
-- **S13 review email:** with deliverability back on *All email*, re-queue S4 and confirm the email arrives.
 - **Volume:** ~500-Lead import (45% name match, some domain match, some shared Accounts, rest unmatched)
   with deliverability on System only. Check all processed, no failed jobs, unique project numbers, run time.
 - **End to end with HubSpot:** HubSpot isn't connected to champsDev (its last sandbox Lead is from June 5,
