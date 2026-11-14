@@ -38,13 +38,12 @@ was Proposed, $1, TOS, closing 2026-11-30, with Principal Investigator set.
 | S17 | Forced failure on every run | Retries 10, 5, 2, 1, then review with the error; chain stopped after 5 retries (platform limit) |
 | S18 | Hourly safety net | 17:00 check picked up the Lead left waiting and sent it to review |
 | S19 | Manual re-queue | Fixed Lead set back to pending, converted by the 17:00 check (project number -102) |
-
 | S20 | Company "act name match 89466, Inc." | Converted onto ACT Name Match 89466 (cleaned name) |
 | S21 | Company "ACT ALIAS 89466" with a sandbox-only alias record | Converted onto ACT Flow Only 89466 (alias) |
 | S22 | Company "The ACT Contact Reuse 89466 LLC" | Converted onto ACT Contact Reuse 89466 (cleaned name) |
 
 Found and fixed: the scheduler test reused the real job name and failed whenever the hourly job was
-scheduled, which would have blocked production deploys. All 37 tests now pass with the job scheduled.
+scheduled, which would have blocked production deploys. All tests (39 now) pass with the job scheduled.
 
 ## 4. Still to do
 
