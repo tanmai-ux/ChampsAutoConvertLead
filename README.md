@@ -3,6 +3,7 @@
 Apex build that converts new TOS MQL Leads into a Contact and a TOS Opportunity on the
 right existing Account, and sends anything it can't convert to the Lead owner for manual review.
 
+- **Start here (developer handoff):** [docs/DEVELOPER_HANDOFF.md](docs/DEVELOPER_HANDOFF.md)
 - **Design and confirmed rules:** [docs/DESIGN.md](docs/DESIGN.md)
 - **Testing (what was run and what's left):** [docs/TESTING.md](docs/TESTING.md)
 - **Go-live steps:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
