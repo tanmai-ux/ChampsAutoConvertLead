@@ -6,6 +6,7 @@ right existing Account, and sends anything it can't convert to the Lead owner fo
 - **Design and confirmed rules:** [docs/DESIGN.md](docs/DESIGN.md)
 - **Testing (what was run and what's left):** [docs/TESTING.md](docs/TESTING.md)
 - **Go-live steps:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+- **Process and gap review:** [docs/REVIEW.md](docs/REVIEW.md)
 
 ## How it works
 
@@ -39,6 +40,8 @@ right existing Account, and sends anything it can't convert to the Lead owner fo
 | `objects/Lead_Auto_Convert_Setting__mdt` + `customMetadata/...Default` | Admin settings (on/off switch, values) |
 | `standardValueSets/LeadStatus`, `objects/Lead/businessProcesses/TOS` | The two new Lead Status values |
 | `labels/CustomLabels` | Review email wording |
+| `reports/Lead_Auto_Convert` | Monitoring reports: waiting Leads, Leads needing review |
+| `objects/Lead/fields/HubSpot_Lifecycle_Stage__c` | The HubSpot MQL flag field the flow reads |
 
 `deploy/production/` holds the production-only run-as config (usernames differ per org).
 
@@ -49,5 +52,5 @@ sf project deploy start -o <org> -d force-app --test-level RunSpecifiedTests \
   -t LeadAutoConvertServiceTest -t LeadAutoConvertWorkerTest -t LeadAutoConvertAccountMatcherTest
 ```
 
-34 Apex tests, including 200-record bulk tests. The sandbox scenario script is in
+37 Apex tests, including 200-record bulk tests. The sandbox scenario script is in
 `scripts/apex/lead-auto-convert-scenarios.apex`.

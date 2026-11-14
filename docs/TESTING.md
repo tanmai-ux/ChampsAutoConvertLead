@@ -2,7 +2,7 @@
 
 ## 1. Apex tests – done
 
-34 tests pass in champsDev. Coverage per class is 86–100%. They include 200-record bulk tests for matching,
+37 tests pass in champsDev. Coverage per class is 86–100%. They include 200-record bulk tests for matching,
 review, the queue action and the worker, plus rules such as name vs flow match, TOS-only, queue owner,
 Contact reuse/conflict, the close-date rule (year end, leap year), $1 / Proposed / Principal Investigator,
 failure retry and the off switch.
@@ -28,11 +28,23 @@ was Proposed, $1, TOS, closing 2026-11-30, with Principal Investigator set.
 | S11 | TOS Lead created without MQL / Contact | Not touched |
 | S12 | POS Lead with MQL / Contact | Not touched |
 
-## 3. Still to do
+## 3. Live edge checks – done (Nov 14, 2026)
+
+| # | Check | Result |
+|---|---|---|
+| S14 | Off switch | MQL Lead created while Active was off was left alone |
+| S15 | Good Leads around another Lead | Both converted |
+| S16 | Close date after cutoff (cutoff temporarily 5) | Close date 2026-12-31; cutoff restored to 21 |
+| S17 | Forced failure on every run | Retries 10, 5, 2, 1, then review with the error; chain stopped after 5 retries (platform limit) |
+| S18 | Hourly safety net | 17:00 check picked up the Lead left waiting and sent it to review |
+| S19 | Manual re-queue | Fixed Lead set back to pending, converted by the 17:00 check (project number -102) |
+
+Found and fixed: the scheduler test reused the real job name and failed whenever the hourly job was
+scheduled, which would have blocked production deploys. All 37 tests now pass with the job scheduled.
+
+## 4. Still to do
 
 - **S13 review email:** with deliverability back on *All email*, re-queue S4 and confirm the email arrives.
-- **Edge checks:** off switch, close date after day 21 (temporarily set Close Date Cutoff Day to 5),
-  hourly safety net, forced failure recovery, manual re-queue.
 - **Volume:** ~500-Lead import (45% name match, some domain match, some shared Accounts, rest unmatched)
   with deliverability on System only. Check all processed, no failed jobs, unique project numbers, run time.
 - **End to end with HubSpot:** HubSpot isn't connected to champsDev (its last sandbox Lead is from June 5,

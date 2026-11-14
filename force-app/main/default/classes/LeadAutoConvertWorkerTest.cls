@@ -251,7 +251,16 @@ private class LeadAutoConvertWorkerTest {
             new LeadAutoConvertScheduler().execute(null);
             Integer jobsQueued = Limits.getQueueableJobs();
             Integer requests = LeadAutoConvertWorker.requestsPublished;
-            Id scheduledId = LeadAutoConvertScheduler.scheduleHourly();
+            Id scheduledId = LeadAutoConvertScheduler.scheduleHourly('Lead Auto-Convert hourly check (test)');
+            // The real job may already be scheduled in this org; either outcome shows the default name is used.
+            try {
+                Assert.isNotNull(LeadAutoConvertScheduler.scheduleHourly(), 'Scheduled under the default name');
+            } catch (AsyncException alreadyScheduled) {
+                Assert.isTrue(
+                    alreadyScheduled.getMessage().contains(LeadAutoConvertScheduler.JOB_NAME),
+                    'Only fails because the real job already exists: ' + alreadyScheduled.getMessage()
+                );
+            }
             Test.stopTest();
 
             Assert.areEqual(1, requests, 'Hourly check sends a start request');

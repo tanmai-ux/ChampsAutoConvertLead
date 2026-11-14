@@ -20,6 +20,15 @@ public with sharing class LeadAutoConvertScheduler implements Schedulable {
     }
 
     public static Id scheduleHourly() {
-        return System.schedule(JOB_NAME, EVERY_HOUR, new LeadAutoConvertScheduler());
+        return scheduleHourly(JOB_NAME);
+    }
+
+    /**
+     * Tests pass their own name: scheduled jobs are visible to tests, so reusing
+     * JOB_NAME would fail every test run (and deploy) while the real job is scheduled.
+     */
+    @TestVisible
+    private static Id scheduleHourly(String jobName) {
+        return System.schedule(jobName, EVERY_HOUR, new LeadAutoConvertScheduler());
     }
 }

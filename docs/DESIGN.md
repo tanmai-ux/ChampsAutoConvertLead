@@ -88,3 +88,9 @@ Fallback Owner Alias, Org-Wide Email Address, Review Email CC.
 - **Monitoring:** if API User is deactivated, Leads stay *Auto-Convert Pending*. Add a report or alert for
   Leads pending longer than an hour.
 - **Deploys:** pause the hourly check before deploying these classes, then reschedule it.
+- **Long outages:** Salesforce lets a failed job re-queue itself only 5 times in a row. If every run
+  fails (for example, a broken setting), the retry chain stops after about one Lead and the hourly check
+  takes over, so Leads drain to review roughly one per hour. Tested live on Nov 14, 2026. Another reason
+  for the pending-Leads monitoring report.
+- **Upstream rules already block two failure types:** Leads with a referral Lead Source need Referred By,
+  and the Lead duplicate rule blocks a second Lead with the same email.
