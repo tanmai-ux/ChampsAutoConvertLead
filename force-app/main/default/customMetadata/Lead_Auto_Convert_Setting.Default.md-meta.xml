@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Default</label>
+    <protected>false</protected>
+    <values>
+        <field>Account_Record_Types__c</field>
+        <value xsi:type="xsd:string">TOS</value>
+    </values>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Close_Date_Cutoff_Day__c</field>
+        <value xsi:type="xsd:double">21.0</value>
+    </values>
+    <values>
+        <field>Contact_Record_Type__c</field>
+        <value xsi:type="xsd:string">General</value>
+    </values>
+    <values>
+        <field>Converted_Status__c</field>
+        <value xsi:type="xsd:string">Qualified</value>
+    </values>
+    <values>
+        <field>Fallback_Owner_Alias__c</field>
+        <value xsi:type="xsd:string">cjenn</value>
+    </values>
+    <values>
+        <field>Leads_Per_Run__c</field>
+        <value xsi:type="xsd:double">10</value>
+    </values>
+    <values>
+        <field>Opportunity_Amount__c</field>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+    <values>
+        <field>Opportunity_Record_Type__c</field>
+        <value xsi:type="xsd:string">TOS</value>
+    </values>
+    <values>
+        <field>Opportunity_Stage__c</field>
+        <value xsi:type="xsd:string">Proposed</value>
+    </values>
+    <values>
+        <field>Org_Wide_Email_Address__c</field>
+        <value xsi:type="xsd:string">no-reply@championsoncology.com</value>
+    </values>
+    <values>
+        <field>Review_Email_Cc__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Pending_Status__c</field>
+        <value xsi:type="xsd:string">Auto-Convert Pending</value>
+    </values>
+    <values>
+        <field>Review_Status__c</field>
+        <value xsi:type="xsd:string">Needs Manual Review</value>
+    </values>
+</CustomMetadata>

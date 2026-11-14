@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fallback_Owner_Alias__c</fullName>
+    <description>Alias of the active user who owns converted records, and gets review notices, when the Lead is owned by a queue.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Alias of the active user who owns converted records, and gets review notices, when the Lead is owned by a queue.</inlineHelpText>
+    <label>Fallback Owner Alias</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

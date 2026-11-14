@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Lead_Auto_Convert_Review_Body</fullName>
+        <categories>Lead Auto Convert</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Lead Auto Convert Review Body</shortDescription>
+        <value>This MQL Lead could not be converted automatically and needs your review.
+
+Lead: {0}
+Company: {1}
+Reason: {2}
+
+Open the Lead: {3}
+
+Choose or create the right Account, then convert the Lead manually.</value>
+    </labels>
+    <labels>
+        <fullName>Lead_Auto_Convert_Review_Subject</fullName>
+        <categories>Lead Auto Convert</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Lead Auto Convert Review Subject</shortDescription>
+        <value>MQL Lead needs review: {0}</value>
+    </labels>
+</CustomLabels>

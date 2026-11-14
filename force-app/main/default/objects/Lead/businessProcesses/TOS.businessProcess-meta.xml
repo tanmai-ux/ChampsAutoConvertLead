@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BusinessProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TOS</fullName>
+    <isActive>true</isActive>
+    <values>
+        <fullName>Auto-Convert Pending</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Closed</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Cold Call List</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Competitor</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Contact Attempted</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Needs Manual Review</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Not Contacted%2FNew</fullName>
+        <default>true</default>
+    </values>
+    <values>
+        <fullName>Open%2FWorking</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Qualified</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Secondary</fullName>
+        <default>false</default>
+    </values>
+</BusinessProcess>

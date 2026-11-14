@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Not Contacted/New</fullName>
+        <default>true</default>
+        <label>Not Contacted/New</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Contact Attempted</fullName>
+        <default>false</default>
+        <label>Contact Attempted</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Open/Working</fullName>
+        <default>false</default>
+        <label>Open/Working</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Auto-Convert Pending</fullName>
+        <default>false</default>
+        <label>Auto-Convert Pending</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Needs Manual Review</fullName>
+        <default>false</default>
+        <label>Needs Manual Review</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Qualified</fullName>
+        <default>false</default>
+        <label>Qualified</label>
+        <converted>true</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed</fullName>
+        <default>false</default>
+        <label>Closed</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Cold Call List</fullName>
+        <default>false</default>
+        <label>Cold Call List</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Secondary</fullName>
+        <default>false</default>
+        <label>Secondary</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Competitor</fullName>
+        <default>false</default>
+        <label>Competitor</label>
+        <converted>false</converted>
+    </standardValue>
+</StandardValueSet>

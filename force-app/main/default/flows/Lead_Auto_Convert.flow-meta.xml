@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Queue_Lead_for_Auto_Convert</name>
+        <label>Queue Lead for Auto-Convert</label>
+        <locationX>308</locationX>
+        <locationY>288</locationY>
+        <actionName>LeadAutoConvertQueueAction</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>leadId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>68.0</apiVersion>
+    <description>Decides which Leads are auto-converted: only TOS Leads created with HubSpot Lifecycle Stage MQL / Contact. Edits to existing Leads never queue them. Qualifying Leads are set to the pending status and the background worker (LeadAutoConvertWorker) converts them, or flags them for review when no Account matches. Settings live in the Lead Auto Convert Setting custom metadata. Runs on the async path so Lead Assignment has already set the owner and Matched Account.</description>
+    <environments>Default</environments>
+    <interviewLabel>Lead Auto Convert {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Lead Auto Convert</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterFormula>{!$Record.HubSpot_Lifecycle_Stage__c} = "MQL / Contact" &amp;&amp; NOT({!$Record.IsConverted}) &amp;&amp; {!$Record.RecordType.DeveloperName} = "TOS_Lead_Record_Type"</filterFormula>
+        <object>Lead</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Queue_Lead_for_Auto_Convert</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+</Flow>

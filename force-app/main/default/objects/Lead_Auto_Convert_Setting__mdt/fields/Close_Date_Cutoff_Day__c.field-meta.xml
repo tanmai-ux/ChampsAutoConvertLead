@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Close_Date_Cutoff_Day__c</fullName>
+    <description>Opportunities created on or before this day of the month close at the end of the month; later ones close at the end of next month. Blank means 21.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Created on or before this day: close at end of this month. After it: end of next month. Blank means 21.</inlineHelpText>
+    <label>Close Date Cutoff Day</label>
+    <precision>2</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
