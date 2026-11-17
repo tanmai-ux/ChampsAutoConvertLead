@@ -79,6 +79,9 @@ The real HubSpot sync on Nov 17 (Leads created by the HubSpot connection user) c
 review correctly; one Lead (Tan Mai) was skipped because HubSpot sent its stage 20 s after creating it – the
 case the grace window now covers.
 
+**Tan Mai (real HubSpot Lead skipped before the change):** re-queued on Nov 17 and converted onto ACT Shared 82195
+(Opportunity 99959-106). Full list of test records: [TEST_RECORDS.md](TEST_RECORDS.md).
+
 ## 4. Still to do
 
 - **Volume:** ~500-Lead import (45% name match, some domain match, some shared Accounts, rest unmatched)
