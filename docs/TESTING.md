@@ -57,6 +57,16 @@ checks passed**. S1–S12 and S20–S22 as above, plus checks that every convert
 $1, 50% probability, TOS, closing 2026-11-30, created by API User with Principal Investigator set, and that
 S10's project numbers are unique (99959-100 / 99959-101).
 
+### Nov 17, 2026 – with sandbox email on
+
+- **Review email (re-queue):** S4, S5 and S9 (tag 82195) set back to Auto-Convert Pending. All returned to
+  Needs Manual Review with new Tasks and the right reasons; the project lead received **3 emails** via the
+  Review Email CC. Lead Assignment sent nothing (no new Leads).
+- **Conversion (re-queue):** the same Leads pointed at TOS Accounts and re-queued. All converted as API User:
+  S4 by exact name (project number 99959-102, continuing -100/-101), S5 by cleaned name ("…, Inc."), S9 onto the
+  Account holding the existing Contact, which was **reused**. All Opportunities Proposed, 50%, $1, closing
+  2026-11-30, TOS, Principal Investigator set. No emails sent.
+
 ## 4. Still to do
 
 - **Volume:** ~500-Lead import (45% name match, some domain match, some shared Accounts, rest unmatched)

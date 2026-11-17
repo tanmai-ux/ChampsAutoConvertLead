@@ -1,11 +1,11 @@
 # Developer Handoff – Champions Oncology MQL Lead Auto-Convert
 
-**Status (Nov 14, 2026):** built and fully tested in the **champsDev** sandbox. **Not deployed to production.**
+**Status (Nov 17, 2026):** built and fully tested in the **champsDev** sandbox. **Not deployed to production.**
 **Repo:** this repository (`main`). **Client:** Champions Oncology. **Partner:** Coastal Cloud.
 
 This document is the single starting point. The other docs go deeper:
-[DESIGN.md](DESIGN.md) (rules), [TESTING.md](TESTING.md) (evidence), [DEPLOYMENT.md](DEPLOYMENT.md) (go-live),
-[REVIEW.md](REVIEW.md) (gaps).
+[DESIGN.md](DESIGN.md) (rules), [TESTING_GUIDE.md](TESTING_GUIDE.md) (how to test), [TESTING.md](TESTING.md) (results),
+[DEPLOYMENT.md](DEPLOYMENT.md) (go-live), [REVIEW.md](REVIEW.md) (gaps).
 
 ---
 
@@ -53,6 +53,22 @@ Rules confirmed afterwards with the Coastal project lead (Nov 11–14) are in se
 | Review | Status **Needs Manual Review** + Task on the Lead for the owner + email (from `no-reply@championsoncology.com`, optional CC). |
 | Run as | **API User**. |
 | Scope | TOS only (not POS, not TOS Tier A Accounts). |
+
+### The process, step by step (business view)
+
+1. **HubSpot** scores a nurture contact as an MQL and syncs it to Salesforce as a **Lead** with HubSpot Lifecycle
+   Stage `MQL / Contact`. BD list uploads keep their existing path and are not converted.
+2. **Lead Assignment** (existing) assigns the owner or a regional queue, finds a Matched Account by email
+   domain, and sends its usual notification emails.
+3. A moment later, **auto-convert** picks the Lead up and decides which TOS Account it belongs to: exact
+   company name, then an admin alias, then the name ignoring "Inc"/"LLC"/punctuation, then Lead Assignment's match.
+4. **If an Account is found**, the Lead becomes a **Contact** on that Account (or joins an existing Contact
+   with the same email), and a new **Opportunity** is created: Proposed, $1, closing at month end, with the
+   Contact as Principal Investigator. The rep owns both; for queue Leads, the Account owner does.
+5. **If not**, the Lead is marked **Needs Manual Review** and the owner gets a **Task and an email** saying why.
+   The rep converts it by hand, or fixes the Company and sets the Status back to **Auto-Convert Pending**.
+6. Admins watch two reports (*Leads Waiting for Auto-Convert*, *MQL Leads Needing Manual Review*) and can switch
+   the whole thing off with one checkbox.
 
 ---
 
@@ -149,7 +165,23 @@ Two queries per run. Sandbox: exact 29.1% + cleaned 15.5% = **44.5%** of TOS Lea
 - **Platform limit:** a finalizer may re-queue only **5 consecutive** failed jobs. Under a systemic failure the chain stops and the hourly check takes over (about one Lead per hour to review). Monitoring report covers this.
 - Chaining only continues after progress, so a Lead that can never leave pending can't loop.
 
-### 5.4 Close date
+### 5.4 Opportunity naming
+
+The build does **not** name Opportunities. It inserts a placeholder (`Company – MQL`, required to save), and the
+existing before-save flow `Opportunity_Before_Save_Naming_and_Numbering` (create only) replaces it:
+
+| Field | Formula | Example |
+|---|---|---|
+| Project Sequence | Account `Highest_Opp_Sequence__c` + 1, or the Account's `Project_Number__c` (or 1) if it has none | 102 |
+| Project | `Account_Number__c` + "-" + sequence padded to 3 | `99959-102` |
+| Name | Project + " " + Account Name | `99959-102 ACT Shared 82195` |
+
+The Opportunity is created **before** conversion so this flow numbers it, and only one Lead per Account is
+converted per run because the roll-up only updates between saves. Accounts with no `Account_Number__c` (59% of
+TOS Accounts) get names like `-100 Company` – existing behaviour, client decision. Auto-created Opportunities can
+be identified by Created By = API User; an "Auto-Created from MQL" checkbox is an optional addition.
+
+### 5.5 Close date
 
 `LeadAutoConvertSettings.closeDateFor(today)`: day ≤ `Close_Date_Cutoff_Day__c` (21) → last day of this month; else last day of next month.
 
@@ -237,6 +269,8 @@ not apply it.
 ```
 sf apex run test -o champsDev -n LeadAutoConvertServiceTest -n LeadAutoConvertWorkerTest -n LeadAutoConvertAccountMatcherTest -w 20
 ```
+
+**How to test:** step-by-step in [TESTING_GUIDE.md](TESTING_GUIDE.md).
 
 **Live scenarios:** `scripts/apex/lead-auto-convert-scenarios.apex` creates tagged `ACT ...` Accounts, Contacts and
 Leads covering S1–S12 and S20–S22. Set sandbox Deliverability to **System email only** first (Lead Assignment
