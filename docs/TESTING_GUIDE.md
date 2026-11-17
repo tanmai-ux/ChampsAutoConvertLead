@@ -1,182 +1,118 @@
-# Testing Guide – MQL Lead Auto-Convert
+# QA Test Guide – MQL Lead Auto-Convert
 
-How to test the build in the **champsDev** sandbox: what to set up, what to test, what you should see, and
-how to avoid emailing real people. Results of past runs are in [TESTING.md](TESTING.md); the design is in
-[DEVELOPER_HANDOFF.md](DEVELOPER_HANDOFF.md).
+Sandbox: **champsDev**. Use this guide to check that new MQL Leads convert automatically, or go to review
+when they can't. Past results: [TESTING.md](TESTING.md).
 
 ---
 
-## 1. Before you start
+## 1. What you're testing (in one minute)
 
-### Check the setup
+When a **TOS Lead** arrives with **HubSpot Lifecycle Stage = `MQL / Contact`**, Salesforce should, within about
+a minute:
 
-| Check | Where | Expected |
+- **Convert it** into a Contact and an Opportunity on the matching **TOS Account**, or
+- **Send it to review**: Status **Needs Manual Review**, plus a Task (and email) telling the owner why.
+
+The Account is matched by the Lead's **Company** (exact name, or the name ignoring "Inc", "LLC",
+punctuation and "The"), an admin **alias**, or Lead Assignment's email-domain match.
+
+---
+
+## 2. Before you start
+
+| # | Check | How |
 |---|---|---|
-| Settings switched on | Setup → Custom Metadata Types → Lead Auto Convert Setting → Manage → **Default** | Active ticked, Account Record Types `TOS`, Close Date Cutoff Day 21 |
-| Flow active | Setup → Flows → **Lead Auto Convert** | Active |
-| Run-as user | Setup → Platform Events → Lead Auto Convert Request → Subscriptions | Trigger **Running** (config points at API User) |
-| Hourly check scheduled | Setup → Scheduled Jobs | "Lead Auto-Convert hourly check" |
-| Nothing stuck | Report **Lead Auto Convert → Leads Waiting for Auto-Convert** | 0 rows |
+| 1 | **Turn email off** (important) | Setup → Deliverability → **System email only**. Creating a Lead makes the existing Lead Assignment flow email **real people** (Tim Cates, Colleen Jennings, regional teams). |
+| 2 | Automation is on | Setup → Custom Metadata Types → Lead Auto Convert Setting → Manage → **Default**: **Active** ticked |
+| 3 | You can edit HubSpot Lifecycle Stage | Only admins can. Log in as an admin. |
+| 4 | Test Accounts exist | Use these TOS Accounts (already in the sandbox): **ACT Shared 82195**, **ACT Clean Target 82195**, **ACT Contact Reuse 82195**, **ACT Other Company 82195**, **ACT Hospital 82195** (Hospital type – should never be used) |
 
-### Who gets emailed (important)
+---
 
-| What happens | Who receives email in the sandbox |
+## 3. How to create a test Lead
+
+1. App Launcher → **Leads** → **New** → record type **TOS Lead Record Type**.
+2. Fill in **First / Last Name** (start the last name with `QA` so it's easy to find later), **Company**, **Email**
+   (use a made-up address, e.g. `qa1@example.com`), **Country** United States, **State** New York.
+3. Set **HubSpot Lifecycle Stage** to `MQL / Contact` (unless the test says otherwise).
+4. **Save**, wait **1 minute**, then **refresh** the page.
+
+## 4. How to check the result
+
+| If it converted | If it went to review |
 |---|---|
-| **A new Lead is created** | The existing **Lead Assignment** flow emails **real, hard-coded addresses**: tcates@ and cjennings@ (default), plus regional teams for CA, MA and UK queue Leads. |
-| A Lead **converts** | Nobody. |
-| A Lead goes to **review** | The owner's user email (ends in `.invalid` in the sandbox, so not delivered) and the **Review Email CC** address in the settings. |
-| An existing Lead is **edited** | Nobody (Lead Assignment only runs on create). |
-
-**Rules of thumb**
-
-- Testing conversions or anything that **creates Leads** → set Setup → Deliverability to **System email only** first.
-- Testing the **review email** → set **All email**, put your address in **Review Email CC**, and **re-queue an existing
-  Lead** instead of creating one (section 4).
-
-### Who can create test Leads
-
-Only admins can edit **HubSpot Lifecycle Stage**. Any admin works: conversion always runs as API User,
-whoever creates the Lead. Set the stage when the Lead is first saved, or **within 5 minutes** of creating it;
-after 5 minutes, setting it does nothing.
+| The Lead shows as converted (or opens the new records) | Status = **Needs Manual Review** |
+| **Account** → Contacts: the new Contact (record type General) | Activity → a Task **"MQL Lead needs review: …"** with the reason |
+| **Account** → Opportunities: a new one with Stage **Proposed**, Probability **50%**, Amount **$1**, record type **TOS**, Close Date **end of this month** (created days 1–21) or **end of next month** (day 22+), **Principal Investigator** = the Contact, Created By **API User** | Email to the Review Email CC address (only when email is on) |
 
 ---
 
-## 2. Automated tests (Apex)
+## 5. Test cases
 
-```
-sf apex run test -o champsDev -n LeadAutoConvertServiceTest -n LeadAutoConvertWorkerTest -n LeadAutoConvertAccountMatcherTest -w 20 -r human -c
-```
+Record **Pass / Fail** for each. "Create a Lead" means section 3.
 
-Expected: **39 passed, 0 failed.** They run safely with the real hourly job scheduled.
+| ID | What you're testing | Steps | Expected result | Pass/Fail |
+|---|---|---|---|---|
+| QA-01 | Exact name match | Create a Lead, Company **ACT Shared 82195** | Converts onto **ACT Shared 82195**; Opportunity named with the next number, e.g. `99959-1xx ACT Shared 82195` | |
+| QA-02 | Name with "Inc" / different capitals | Company **act clean target 82195, Inc.** | Converts onto **ACT Clean Target 82195** | |
+| QA-03 | Name with "The" and "LLC" | Company **The ACT Clean Target 82195 LLC** | Converts onto **ACT Clean Target 82195** | |
+| QA-04 | No match | Company **QA Nobody Company** | **Needs Manual Review**; Task reason "No TOS Account matches …" | |
+| QA-05 | Only a non-TOS Account matches | Company **ACT Hospital 82195** | **Needs Manual Review** (Hospital Accounts don't count) | |
+| QA-06 | Existing Contact on the same Account | First create a **Contact** on **ACT Contact Reuse 82195** (record type General, email `qa-reuse@example.com`). Then create a Lead: Company **ACT Contact Reuse 82195**, Email `qa-reuse@example.com` | Converts and **reuses that Contact** (no second Contact) | |
+| QA-07 | Email belongs to a Contact on another Account | First create a **Contact** on **ACT Other Company 82195** (email `qa-other@example.com`). Then create a Lead: Company **ACT Shared 82195**, Email `qa-other@example.com` | **Needs Manual Review**; reason "A Contact with this email already exists on a different Account" | |
+| QA-08 | Lead lands in a regional queue | Company **ACT Shared 82195**, **State California** | Converts; Contact and Opportunity owned by the **Account owner** (not the queue) | |
+| QA-09 | Two Leads for the same Account | Create two Leads quickly, both Company **ACT Shared 82195** | Both convert; their Opportunities get **different numbers** | |
+| QA-10 | Not an MQL | Company **ACT Shared 82195**, HubSpot Lifecycle Stage **blank** | **Nothing happens** (stays Not Contacted/New) | |
+| QA-11 | POS Lead | Record type **POS**, Company **ACT Shared 82195**, stage `MQL / Contact` | **Nothing happens** | |
+| QA-12 | Stage arrives late (HubSpot's second sync) | Create a Lead **without** the stage; within **5 minutes** edit it and set `MQL / Contact` | Converts (picked up after the edit) | |
+| QA-13 | Stage arrives too late | Create a Lead without the stage; **wait 6 minutes**; then set `MQL / Contact` | **Nothing happens** | |
+| QA-14 | Edit after processing | Take the QA-04 Lead (in review); edit another field (e.g. Title) and save | Stays in review; **no** second Task | |
+| QA-15 | Retry after fixing | Take the QA-04 Lead; change Company to **ACT Shared 82195** and Status to **Auto-Convert Pending**; save | Converts at the next **top of the hour** (hourly check) | |
+| QA-16 | Review email | Turn email **on** (All email), put your address in **Review Email CC**; set a review Lead's Status to **Auto-Convert Pending** and wait for the top of the hour | Lead returns to review; you receive "MQL Lead needs review: …" from no-reply@championsoncology.com | |
+| QA-17 | Off switch | Untick **Active**; create a Lead like QA-01; wait 2 minutes; tick **Active** again | **Nothing happens** to that Lead (it is not picked up later either) | |
 
-| Class | What it proves |
-|---|---|
-| `LeadAutoConvertServiceTest` | Each conversion rule: matching paths, owners, Contact reuse/conflict, Opportunity values, close-date rule, review Task and email (incl. CC), rollback of unused Opportunities, skip/defer, 200-Lead bulk review |
-| `LeadAutoConvertWorkerTest` | One worker at a time, chaining, failure retry (10→5→2→1) and review, off switch, queue action (200 Leads), platform event delivery, hourly scheduler |
-| `LeadAutoConvertAccountMatcherTest` | Name cleaning, exact → alias → cleaned → flow order, ambiguity, non-TOS Accounts, deleted matches, 200 Leads in 2 queries |
+Tips:
 
----
-
-## 3. Full scenario run (scripted)
-
-Creates fresh, tagged test data (`ACT ... <tag>`) covering every scenario in one go.
-
-1. Set Deliverability to **System email only** (the script creates 16 Leads).
-2. Run: `sf apex run -o champsDev -f scripts/apex/lead-auto-convert-scenarios.apex`
-   The output ends with `SCENARIOS={...}` – the tag plus every Account and Lead Id.
-3. Wait 1–2 minutes (10 Leads per run, then it chains).
-4. Check each Lead against the table below (or ask a developer to run the check queries in section 7).
-5. S21 needs the sandbox-only alias record **"ACT Alias 89466" → "ACT Flow Only 89466"**.
-
-| ID | Scenario | Expected |
-|---|---|---|
-| S1 | Company = TOS Account name | Converted onto that Account |
-| S2 | No name match; Lead Assignment matched by email domain | Converted onto the flow's Account |
-| S3 | Name match and a different flow match | Converted onto the **name** match |
-| S4 | No match at all | Needs Manual Review: "No TOS Account matches … by name or alias, and the Lead Assignment flow found no matching Account." |
-| S5 | Name matches only a Hospital Account | Needs Manual Review (non-TOS never counts) |
-| S6 | Flow matched a non-TOS Account | Needs Manual Review: "…is not a TOS Account." |
-| S7 | Lead lands in the California Leads queue | Converted; Contact and Opportunity owned by the **Account owner** |
-| S8 | Contact with the same email already on the Account | Converted; **existing Contact reused** |
-| S9 | Contact with the same email on another Account | Needs Manual Review: "A Contact with this email already exists on a different Account…" |
-| S10 | Two Leads for the same Account | Both converted, in separate runs; project numbers `-100` and `-101` |
-| S11 | TOS Lead created without MQL / Contact | Untouched (Not Contacted/New) |
-| S12 | POS Lead with MQL / Contact | Untouched |
-| S20 | Company "acct name, Inc." | Converted by **cleaned name** |
-| S21 | Company equals an alias | Converted onto the alias's Account |
-| S22 | Company "The acct name LLC" | Converted by **cleaned name** |
-| S23 | Lead created **without** the stage, stage set within 5 minutes (HubSpot's late sync) | Picked up and processed |
-| S24 | Lead created without the stage, stage set **after** 5 minutes | Untouched |
-| S25 | Lead already processed, then edited again (another HubSpot sync) | Not processed a second time |
-
-### What every converted Lead should show
-
-- Lead Status **Qualified**, converted.
-- Contact record type **General**, owner = Lead owner (or Account owner for queue Leads).
-- Opportunity: record type **TOS**, stage **Proposed**, probability **50%**, Amount **$1**, close date **end of this
-  month** if created on days 1–21 (else end of next month), **Principal Investigator** = the Contact,
-  Created By **API User**, name like `99959-102 Account Name` (set by the existing naming flow).
-
-### What every review Lead should show
-
-- Status **Needs Manual Review**, not converted.
-- A Task under Activity: "MQL Lead needs review: <name>", with the reason and a link.
-- An email with the same content to the CC address (when email is on).
+- Use a **new email address for every Lead** – the duplicate rules block a second Lead with the same email.
+- QA-15 and QA-16 wait for the hourly check. A developer can start it immediately (appendix).
+- For QA-16 only: creating Leads with email on emails real people, so use an existing Lead as described.
+- Put **Active**, **Review Email CC** and **Deliverability** back how the team wants them when you finish.
 
 ---
 
-## 4. Manual tests without creating Leads (re-queue)
+## 6. Monitoring reports
 
-Changing an existing Lead's Status back to **Auto-Convert Pending** puts it through the automation again
-without running Lead Assignment, so **no one else is emailed**. Use it for:
+Reports → folder **Lead Auto Convert**:
 
-- **Review email:** leave a review Lead as it is, set Status to Auto-Convert Pending → it returns to review
-  with a new Task and email to the CC.
-- **Conversion:** first change **Company** to a TOS Account name (or a variant like "Name, Inc."), then set
-  Status to Auto-Convert Pending → it converts.
+- **Leads Waiting for Auto-Convert** – should be empty, or only minutes old. Anything older means something is stuck.
+- **MQL Leads Needing Manual Review** – Leads waiting for a rep, oldest first.
 
-The hourly check picks re-queued Leads up at the top of the hour. To run immediately, execute
-`LeadAutoConvertWorker.requestStart('Manual test');` in Anonymous Apex.
+## 7. Not testable in the sandbox
 
-Edit through the UI or Apex. A CLI/REST update (`sf data update record`) also runs Lead **assignment
-rules** and can change the owner.
-
----
-
-## 5. Edge tests
-
-| Test | How | Expected |
-|---|---|---|
-| **Off switch** | Untick Active; create an MQL Lead; wait 90 s; tick Active again | Lead untouched. It is **not** picked up later when switched back on. |
-| **Close date after cutoff** | Set Close Date Cutoff Day below today's date; convert one Lead; set back to 21 | Close date = end of **next** month |
-| **Failure recovery** | Set Contact Record Type to a value that doesn't exist; re-queue 1–2 Leads; restore it | Runs fail, retry 10→5→2→1, Lead goes to review "Automatic conversion failed: …". After 5 failures in a row the chain stops (platform limit) and the hourly check carries on. |
-| **Hourly safety net** | Leave a Lead in Auto-Convert Pending without starting the job | Processed at the next top of the hour |
-| **Manual re-queue** | See section 4 | Converts or returns to review |
-| **Volume** (not yet run) | Import ~500 MQL Leads (mix of matches, shared Accounts, no matches) with email on System only | All processed, no failed jobs, unique project numbers |
-
-Change settings through the settings page, and put every value back afterwards.
-
----
-
-## 6. Things that can't be tested in the sandbox
-
-- **HubSpot → Salesforce sync.** HubSpot isn't connected to champsDev. In the sandbox, creating a Lead with
-  `MQL / Contact` stands in for HubSpot. The real path needs a controlled production pilot (see
-  [TESTING.md](TESTING.md) for the end-to-end checklist and the pre-pilot query).
-- **Real user emails.** Sandbox user emails end in `.invalid`; use the Review Email CC.
-
----
-
-## 7. Troubleshooting and useful queries
-
-| Symptom | Check |
-|---|---|
-| Lead stays in Auto-Convert Pending | Report *Leads Waiting for Auto-Convert*; Setup → Apex Jobs for failed `LeadAutoConvertWorker` jobs; the trigger subscription status; that API User is active |
-| Nothing happens to a new MQL Lead | Settings Active; flow active; stage was set **on create**; TOS record type |
-| Opportunity failed | The review Task reason (e.g. a validation rule message) |
-| Wrong owner | Lead Assignment set it; queue Leads take the Account owner |
-| No review email | Deliverability; Review Email CC set; Setup → Email Log Files |
-
-```sql
--- Leads waiting or in review
-SELECT Id, Name, Company, Status, Owner.Name, LastModifiedDate FROM Lead
-WHERE Status IN ('Auto-Convert Pending','Needs Manual Review') ORDER BY LastModifiedDate DESC
-
--- Recent worker runs (who it ran as, errors)
-SELECT CreatedDate, Status, ExtendedStatus, CreatedBy.Name FROM AsyncApexJob
-WHERE ApexClass.Name = 'LeadAutoConvertWorker' ORDER BY CreatedDate DESC LIMIT 10
-
--- What a converted Lead produced
-SELECT ConvertedAccount.Name, ConvertedContact.Name, ConvertedOpportunity.Name,
-       ConvertedOpportunity.StageName, ConvertedOpportunity.Amount, ConvertedOpportunity.CloseDate,
-       ConvertedOpportunity.CreatedBy.Name, ConvertedOpportunity.Principal_Investigator__r.Name
-FROM Lead WHERE Id = '<lead id>'
-```
-
----
+- **The real HubSpot sync** only works where HubSpot is connected (production, or a connected sandbox). In
+  this guide, creating a Lead with `MQL / Contact` stands in for HubSpot.
+- **Emails to real users:** sandbox user emails end in `.invalid`; use **Review Email CC** to see review emails.
 
 ## 8. Clean-up
 
-Test records are all named `ACT ...` with a tag (runs so far: `89466`, `82195`). After sign-off, delete those
-Leads, Contacts, Opportunities and Accounts, and the sandbox-only alias **"ACT Alias 89466"**. Put
-Deliverability and Review Email CC back to how the team wants them.
+Delete your `QA …` Leads and any Contacts/Opportunities they created when testing is signed off.
+
+---
+
+## Appendix – for developers
+
+- **Apex tests (39):**
+  `sf apex run test -o champsDev -n LeadAutoConvertServiceTest -n LeadAutoConvertWorkerTest -n LeadAutoConvertAccountMatcherTest -w 20`
+- **Full scripted run:** `sf apex run -o champsDev -f scripts/apex/lead-auto-convert-scenarios.apex` (email off first).
+- **Start the job now** (instead of waiting for the hourly check): Anonymous Apex `LeadAutoConvertWorker.requestStart('QA');`
+- **The flow's 5-minute rule can't be unit tested** (async flow paths don't run in Apex tests) – QA-12/13 cover it.
+- **Edits from the CLI/REST API** run Lead assignment rules and can change the owner; use the UI or Apex.
+- **Useful queries:**
+
+```sql
+SELECT Id, Name, Company, Status, Owner.Name, LastModifiedDate FROM Lead
+WHERE Status IN ('Auto-Convert Pending','Needs Manual Review') ORDER BY LastModifiedDate DESC
+
+SELECT CreatedDate, Status, ExtendedStatus, CreatedBy.Name FROM AsyncApexJob
+WHERE ApexClass.Name = 'LeadAutoConvertWorker' ORDER BY CreatedDate DESC LIMIT 10
+```

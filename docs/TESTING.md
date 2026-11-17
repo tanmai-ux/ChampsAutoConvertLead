@@ -67,6 +67,18 @@ S10's project numbers are unique (99959-100 / 99959-101).
   Account holding the existing Contact, which was **reused**. All Opportunities Proposed, 50%, $1, closing
   2026-11-30, TOS, Principal Investigator set. No emails sent.
 
+### Nov 17, 2026 – 5-minute grace window (email on System only)
+
+| # | Test | Result |
+|---|---|---|
+| S23 | Lead created **without** the stage at 20:21:37; stage set at 20:21:52 (like HubSpot's late sync) | Picked up 4 s later and **converted** by API User (99959-105 ACT Shared 82195) |
+| S24 | Lead created without the stage at 20:21:37; stage set at 20:27:40 (after 5 minutes) | **Ignored** as intended: stayed Not Contacted/New, no status change |
+| S25 | Lead created as MQL, went to review; then another field edited | Stayed in review; no second Task, no new status change |
+
+The real HubSpot sync on Nov 17 (Leads created by the HubSpot connection user) converted 2 Leads and sent 2 to
+review correctly; one Lead (Tan Mai) was skipped because HubSpot sent its stage 20 s after creating it – the
+case the grace window now covers.
+
 ## 4. Still to do
 
 - **Volume:** ~500-Lead import (45% name match, some domain match, some shared Accounts, rest unmatched)
