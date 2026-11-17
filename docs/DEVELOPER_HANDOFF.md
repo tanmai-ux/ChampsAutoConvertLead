@@ -2,11 +2,6 @@
 
 Champions Oncology · Built by Coastal Cloud · Updated Nov 17, 2026
 
-**Status:** built and tested in the **champsDev** sandbox. Not yet in production.
-**Full detail:** [DEVELOPER_REFERENCE.md](DEVELOPER_REFERENCE.md). **How to test:** [TESTING_GUIDE.md](TESTING_GUIDE.md).
-
----
-
 ## 1. What it does
 
 When HubSpot sends a new MQL Lead to Salesforce, this build converts it into a **Contact** and an
