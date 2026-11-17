@@ -5,7 +5,7 @@ Opportunities are named `ACT ...` with the same tag. Delete them after sign-off.
 alias record **ACT Alias 89466**.
 
 Real HubSpot test Leads (created by the HubSpot connection on Nov 17): Earl Major, Test Kendall D, Tan Mai,
-Test Tan M, Kendall Demavivas. **Tan Mai** was skipped before the 5-minute grace window existed (HubSpot sent the
+Test Tan M, Kendall Demavivas. **Tan Mai** was skipped before the grace window existed (HubSpot sent the
 stage 20 s late); it was re-queued on Nov 17 and converted ([Lead](https://championsoncology--cofull.sandbox.my.salesforce.com/00Qcb00000QIRCVEA5), Opportunity
 [99959-106 ACT Shared 82195](https://championsoncology--cofull.sandbox.my.salesforce.com/006cb00000NyfB7AAJ)).
 
@@ -52,3 +52,5 @@ stage 20 s late); it was re-queued on Nov 17 and converted ([Lead](https://champ
 | 2026-11-17 | [ACT S23 stage within 5 min G1](https://championsoncology--cofull.sandbox.my.salesforce.com/00Qcb00000QIMBHEA5) | ACT Shared 82195 | Converted |
 | 2026-11-17 | [ACT S24 stage after 5 min G1](https://championsoncology--cofull.sandbox.my.salesforce.com/00Qcb00000QIMBIEA5) | ACT Shared 82195 | Not Contacted/New |
 | 2026-11-17 | [ACT S25 processed then edited G1](https://championsoncology--cofull.sandbox.my.salesforce.com/00Qcb00000QIMBJEA5) | ACT No Match G1 | Needs Manual Review |
+| 2026-11-17 | [ACT S26 stage at 15 sec G2](https://championsoncology--cofull.sandbox.my.salesforce.com/00Qcb00000QIG7QEAX) | ACT Shared 82195 | Converted |
+| 2026-11-17 | [ACT S27 stage at 75 sec G2](https://championsoncology--cofull.sandbox.my.salesforce.com/00Qcb00000QIG7REAX) | ACT Shared 82195 | Not Contacted/New |

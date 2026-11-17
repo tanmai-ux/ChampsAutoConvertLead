@@ -64,8 +64,8 @@ Record **Pass / Fail** for each. "Create a Lead" means section 3.
 | QA-09 | Two Leads for the same Account | Create two Leads quickly, both Company **ACT Shared 82195** | Both convert; their Opportunities get **different numbers** | |
 | QA-10 | Not an MQL | Company **ACT Shared 82195**, HubSpot Lifecycle Stage **blank** | **Nothing happens** (stays Not Contacted/New) | |
 | QA-11 | POS Lead | Record type **POS**, Company **ACT Shared 82195**, stage `MQL / Contact` | **Nothing happens** | |
-| QA-12 | Stage arrives late (HubSpot's second sync) | Create a Lead **without** the stage; within **5 minutes** edit it and set `MQL / Contact` | Converts (picked up after the edit) | |
-| QA-13 | Stage arrives too late | Create a Lead without the stage; **wait 6 minutes**; then set `MQL / Contact` | **Nothing happens** | |
+| QA-12 | Stage arrives late (HubSpot's second sync) | Create a Lead **without** the stage; within **1 minute** (about 15-30 seconds) edit it and set `MQL / Contact` | Converts (picked up after the edit) | |
+| QA-13 | Stage arrives too late | Create a Lead without the stage; **wait 2 minutes**; then set `MQL / Contact` | **Nothing happens**; the Lead appears in the *MQL Leads Not Picked Up* report | |
 | QA-14 | Edit after processing | Take the QA-04 Lead (in review); edit another field (e.g. Title) and save | Stays in review; **no** second Task | |
 | QA-15 | Retry after fixing | Take the QA-04 Lead; change Company to **ACT Shared 82195** and Status to **Auto-Convert Pending**; save | Converts at the next **top of the hour** (hourly check) | |
 | QA-16 | Review email | Turn email **on** (All email), put your address in **Review Email CC**; set a review Lead's Status to **Auto-Convert Pending** and wait for the top of the hour | Lead returns to review; you receive "MQL Lead needs review: …" from no-reply@championsoncology.com | |
@@ -86,6 +86,8 @@ Reports → folder **Lead Auto Convert**:
 
 - **Leads Waiting for Auto-Convert** – should be empty, or only minutes old. Anything older means something is stuck.
 - **MQL Leads Needing Manual Review** – Leads waiting for a rep, oldest first.
+- **MQL Leads Not Picked Up** – MQL Leads the automation never touched (for example HubSpot sent the stage more
+  than 1 minute after creating the Lead, or auto-convert was off). Convert them by hand or re-queue them.
 
 ## 7. Not testable in the sandbox
 
@@ -105,7 +107,7 @@ Delete your `QA …` Leads and any Contacts/Opportunities they created when test
   `sf apex run test -o champsDev -n LeadAutoConvertServiceTest -n LeadAutoConvertWorkerTest -n LeadAutoConvertAccountMatcherTest -w 20`
 - **Full scripted run:** `sf apex run -o champsDev -f scripts/apex/lead-auto-convert-scenarios.apex` (email off first).
 - **Start the job now** (instead of waiting for the hourly check): Anonymous Apex `LeadAutoConvertWorker.requestStart('QA');`
-- **The flow's 5-minute rule can't be unit tested** (async flow paths don't run in Apex tests) – QA-12/13 cover it.
+- **The flow's 1-minute rule can't be unit tested** (async flow paths don't run in Apex tests) – QA-12/13 cover it.
 - **Edits from the CLI/REST API** run Lead assignment rules and can change the owner; use the UI or Apex.
 - **Useful queries:**
 

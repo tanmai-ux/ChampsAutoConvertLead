@@ -16,7 +16,7 @@
         </inputParameters>
     </actionCalls>
     <apiVersion>68.0</apiVersion>
-    <description>Decides which Leads are auto-converted: TOS Leads that have HubSpot Lifecycle Stage MQL / Contact when created, or get it within 5 minutes of being created (HubSpot sometimes sends the stage in a follow-up sync). Leads that become MQL later are ignored. Runs only when a Lead changes to meet these conditions, so a Lead is queued once. Qualifying Leads are set to the pending status and the background worker (LeadAutoConvertWorker) converts them, or flags them for review when no Account matches. Settings live in the Lead Auto Convert Setting custom metadata. Runs on the async path so Lead Assignment has already set the owner and Matched Account.</description>
+    <description>Decides which Leads are auto-converted: TOS Leads that have HubSpot Lifecycle Stage MQL / Contact when created, or get it within 1 minute of being created (HubSpot sometimes sends the stage in a follow-up sync). Leads that become MQL later are ignored. Runs only when a Lead changes to meet these conditions, so a Lead is queued once. Qualifying Leads are set to the pending status and the background worker (LeadAutoConvertWorker) converts them, or flags them for review when no Account matches. Settings live in the Lead Auto Convert Setting custom metadata. Runs on the async path so Lead Assignment has already set the owner and Matched Account.</description>
     <environments>Default</environments>
     <interviewLabel>Lead Auto Convert {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Lead Auto Convert</label>
@@ -43,7 +43,7 @@
         <locationX>50</locationX>
         <locationY>0</locationY>
         <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
-        <filterFormula>{!$Record.HubSpot_Lifecycle_Stage__c} = "MQL / Contact" &amp;&amp; NOT({!$Record.IsConverted}) &amp;&amp; {!$Record.RecordType.DeveloperName} = "TOS_Lead_Record_Type" &amp;&amp; (NOW() - {!$Record.CreatedDate}) * 1440 &lt;= 5</filterFormula>
+        <filterFormula>{!$Record.HubSpot_Lifecycle_Stage__c} = "MQL / Contact" &amp;&amp; NOT({!$Record.IsConverted}) &amp;&amp; {!$Record.RecordType.DeveloperName} = "TOS_Lead_Record_Type" &amp;&amp; (NOW() - {!$Record.CreatedDate}) * 1440 &lt;= 1</filterFormula>
         <object>Lead</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <scheduledPaths>

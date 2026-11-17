@@ -14,7 +14,7 @@ right existing Account, and sends anything it can't convert to the Lead owner fo
 ## How it works
 
 1. A TOS Lead is **created** with `HubSpot Lifecycle Stage = MQL / Contact`, or gets that stage within
-   5 minutes of creation (HubSpot can send it in a follow-up sync).
+   1 minute of creation (HubSpot can send it in a follow-up sync).
 2. The existing **Lead Assignment** flow runs first, unchanged: owner or queue, Matched Account, emails.
 3. The **Lead Auto Convert** flow (async path, after the save commits) sets the Lead to
    *Auto-Convert Pending* and publishes a **Lead Auto Convert Request** platform event.
@@ -46,7 +46,7 @@ right existing Account, and sends anything it can't convert to the Lead owner fo
 | `objects/Lead_Auto_Convert_Setting__mdt` + `customMetadata/...Default` | Admin settings (on/off switch, values) |
 | `standardValueSets/LeadStatus`, `objects/Lead/businessProcesses/TOS` | The two new Lead Status values |
 | `labels/CustomLabels` | Review email wording |
-| `reports/Lead_Auto_Convert` | Monitoring reports: waiting Leads, Leads needing review |
+| `reports/Lead_Auto_Convert` | Monitoring reports: waiting Leads, Leads needing review, MQL Leads not picked up |
 | `objects/Lead/fields/HubSpot_Lifecycle_Stage__c` | The HubSpot MQL flag field the flow reads |
 
 `deploy/production/` holds the production-only run-as config (usernames differ per org).

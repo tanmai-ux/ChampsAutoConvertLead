@@ -67,13 +67,17 @@ S10's project numbers are unique (99959-100 / 99959-101).
   Account holding the existing Contact, which was **reused**. All Opportunities Proposed, 50%, $1, closing
   2026-11-30, TOS, Principal Investigator set. No emails sent.
 
-### Nov 17, 2026 – 5-minute grace window (email on System only)
+### Nov 17, 2026 – grace window (email on System only)
 
 | # | Test | Result |
 |---|---|---|
 | S23 | Lead created **without** the stage at 20:21:37; stage set at 20:21:52 (like HubSpot's late sync) | Picked up 4 s later and **converted** by API User (99959-105 ACT Shared 82195) |
 | S24 | Lead created without the stage at 20:21:37; stage set at 20:27:40 (after 5 minutes) | **Ignored** as intended: stayed Not Contacted/New, no status change |
 | S25 | Lead created as MQL, went to review; then another field edited | Stayed in review; no second Task, no new status change |
+| S26 | Window shortened to **1 minute**. Lead created at 20:51:51 without the stage; stage set at 20:52:06 (15 s) | Picked up and **converted** by API User (99959-107) |
+| S27 | Lead created at 20:51:51 without the stage; stage set at 20:53:09 (78 s) | **Ignored**; appears in the *MQL Leads Not Picked Up* report |
+
+S23–S25 ran with the original 5-minute window; S26–S27 with the final 1-minute window.
 
 The real HubSpot sync on Nov 17 (Leads created by the HubSpot connection user) converted 2 Leads and sent 2 to
 review correctly; one Lead (Tan Mai) was skipped because HubSpot sent its stage 20 s after creating it – the
@@ -109,4 +113,4 @@ WHERE CreatedBy.Name = 'Hubspot Integration' AND CreatedDate = LAST_N_DAYS:30
 ORDER BY CreatedDate DESC
 ```
 
-HubSpot Leads that get the stage within 5 minutes of creation are picked up (grace window, added Nov 17). Check that production HubSpot syncs stay inside that window.
+HubSpot Leads that get the stage within 1 minute of creation are picked up (grace window, added Nov 17). Check that production HubSpot syncs stay inside that window using the *MQL Leads Not Picked Up* report.

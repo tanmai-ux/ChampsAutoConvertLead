@@ -23,8 +23,8 @@ for the owner to review and tells them why.
 6. An hourly check restarts the job if it ever stops.
 
 A Lead is picked up when it's **created** as `MQL / Contact`, or when HubSpot sets `MQL / Contact`
-**within 5 minutes** of creating it (HubSpot sometimes sends the stage in a second sync a few seconds
-later). Each Lead is picked up once. A Lead that becomes MQL after 5 minutes is ignored.
+**within 1 minute** of creating it (HubSpot sometimes sends the stage in a second sync a few seconds
+later). Each Lead is picked up once. A Lead that becomes MQL after 1 minute is ignored and shows up in the *MQL Leads Not Picked Up* report.
 
 ---
 
@@ -80,7 +80,7 @@ To retry after fixing the Lead: set its Status back to **Auto-Convert Pending**.
 | `LeadAutoConvertSelector` | All queries |
 | `Lead_Auto_Convert_Setting__mdt` | Admin settings |
 | `Lead_Auto_Convert_Account_Alias__mdt` | Admin alias list |
-| Reports folder **Lead Auto Convert** | *Leads Waiting for Auto-Convert*, *MQL Leads Needing Manual Review* |
+| Reports folder **Lead Auto Convert** | *Leads Waiting for Auto-Convert*, *MQL Leads Needing Manual Review*, *MQL Leads Not Picked Up* |
 
 ---
 
@@ -121,7 +121,7 @@ Aliases: Setup → Custom Metadata Types → **Lead Auto Convert Account Alias**
 
 - **Apex:** 39 tests, all passing. Run the three `LeadAutoConvert*Test` classes.
 - **The flow's entry rule can't be unit tested:** Salesforce doesn't run a flow's async path inside Apex tests.
-  Test it live: create a Lead without the stage, then set it within 5 minutes (and after 5 minutes).
+  Test it live: create a Lead without the stage, then set it within 1 minute (and after 1 minute).
 - **Scenarios:** `scripts/apex/lead-auto-convert-scenarios.apex` creates fresh test data for every case.
 - **Results and step-by-step guide:** [TESTING.md](TESTING.md), [TESTING_GUIDE.md](TESTING_GUIDE.md).
 
@@ -131,7 +131,7 @@ Aliases: Setup → Custom Metadata Types → **Lead Auto Convert Account Alias**
 
 | Item | Owner |
 |---|---|
-| Confirm HubSpot sets `MQL / Contact` within 5 minutes of creating the Lead in production (it can lag a few seconds) | Zach, Kendall |
+| Confirm HubSpot sets `MQL / Contact` within 1 minute of creating the Lead in production (20 s seen in the sandbox); watch the *MQL Leads Not Picked Up* report after go-live | Zach, Kendall, admin |
 | Confirm BD list uploads never arrive as `MQL / Contact` | Zach, Kendall |
 | Opportunity naming for Accounts without an Account Number | Champions |
 | Add aliases (BMS, GSK, Lilly, DCB, IRB Barcelona) | Champions admin |
