@@ -6,8 +6,10 @@ Oct 30, 2026 Champions call (Apex for conversion and Opportunity creation; keep 
 ## Which Leads
 
 - **Lead record type:** TOS (`TOS_Lead_Record_Type`) only.
-- **When:** only when the Lead is **created** with `HubSpot_Lifecycle_Stage__c = "MQL / Contact"`.
-  That field is the HubSpot "nurture MQL" flag. Later edits never queue a Lead.
+- **When:** the Lead has `HubSpot_Lifecycle_Stage__c = "MQL / Contact"` when it is **created**, or gets it
+  **within 5 minutes of being created**. That field is the HubSpot "nurture MQL" flag. HubSpot sometimes
+  creates the Lead first and sends the stage in a follow-up sync (20 seconds later in the sandbox), so the
+  5-minute grace window catches it. A Lead is queued only once; Leads that become MQL later are ignored.
 - **Out of scope:** BD list uploads. They must not arrive with `MQL / Contact` (to confirm with HubSpot admins).
 
 ## Order of automation
@@ -93,8 +95,8 @@ Fallback Owner Alias, Org-Wide Email Address, Review Email CC.
 
 ## Known risks
 
-- **HubSpot timing:** if HubSpot creates the Lead first and sets the stage in a later sync, the create-only
-  rule won't fire. Check production before the pilot (see TESTING.md).
+- **HubSpot timing:** handled by the 5-minute grace window. A stage that arrives more than 5 minutes after
+  creation is still missed; field history on HubSpot Lifecycle Stage would show such cases.
 - **Monitoring:** if API User is deactivated, Leads stay *Auto-Convert Pending*. Add a report or alert for
   Leads pending longer than an hour.
 - **Deploys:** pause the hourly check before deploying these classes, then reschedule it.

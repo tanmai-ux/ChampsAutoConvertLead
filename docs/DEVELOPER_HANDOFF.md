@@ -27,7 +27,9 @@ for the owner to review and tells them why.
    - marks it **Needs Manual Review** and gives the owner a **Task and an email** with the reason.
 6. An hourly check restarts the job if it ever stops.
 
-Only Leads **created** as `MQL / Contact` are processed. Editing a Lead later does nothing.
+A Lead is picked up when it's **created** as `MQL / Contact`, or when HubSpot sets `MQL / Contact`
+**within 5 minutes** of creating it (HubSpot sometimes sends the stage in a second sync a few seconds
+later). Each Lead is picked up once. A Lead that becomes MQL after 5 minutes is ignored.
 
 ---
 
@@ -123,6 +125,8 @@ Aliases: Setup → Custom Metadata Types → **Lead Auto Convert Account Alias**
 ## 9. Testing
 
 - **Apex:** 39 tests, all passing. Run the three `LeadAutoConvert*Test` classes.
+- **The flow's entry rule can't be unit tested:** Salesforce doesn't run a flow's async path inside Apex tests.
+  Test it live: create a Lead without the stage, then set it within 5 minutes (and after 5 minutes).
 - **Scenarios:** `scripts/apex/lead-auto-convert-scenarios.apex` creates fresh test data for every case.
 - **Results and step-by-step guide:** [TESTING.md](TESTING.md), [TESTING_GUIDE.md](TESTING_GUIDE.md).
 
@@ -132,7 +136,7 @@ Aliases: Setup → Custom Metadata Types → **Lead Auto Convert Account Alias**
 
 | Item | Owner |
 |---|---|
-| Confirm HubSpot sets `MQL / Contact` when it **creates** the Lead in production | Zach, Kendall |
+| Confirm HubSpot sets `MQL / Contact` within 5 minutes of creating the Lead in production (it can lag a few seconds) | Zach, Kendall |
 | Confirm BD list uploads never arrive as `MQL / Contact` | Zach, Kendall |
 | Opportunity naming for Accounts without an Account Number | Champions |
 | Add aliases (BMS, GSK, Lilly, DCB, IRB Barcelona) | Champions admin |

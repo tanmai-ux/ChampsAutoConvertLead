@@ -94,4 +94,4 @@ WHERE CreatedBy.Name = 'Hubspot Integration' AND CreatedDate = LAST_N_DAYS:30
 ORDER BY CreatedDate DESC
 ```
 
-If new HubSpot Leads arrive with the stage blank and get it later, the create-only rule needs revisiting.
+HubSpot Leads that get the stage within 5 minutes of creation are picked up (grace window, added Nov 17). Check that production HubSpot syncs stay inside that window.

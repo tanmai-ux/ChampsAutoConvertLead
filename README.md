@@ -13,7 +13,8 @@ right existing Account, and sends anything it can't convert to the Lead owner fo
 
 ## How it works
 
-1. A TOS Lead is **created** with `HubSpot Lifecycle Stage = MQL / Contact`.
+1. A TOS Lead is **created** with `HubSpot Lifecycle Stage = MQL / Contact`, or gets that stage within
+   5 minutes of creation (HubSpot can send it in a follow-up sync).
 2. The existing **Lead Assignment** flow runs first, unchanged: owner or queue, Matched Account, emails.
 3. The **Lead Auto Convert** flow (async path, after the save commits) sets the Lead to
    *Auto-Convert Pending* and publishes a **Lead Auto Convert Request** platform event.

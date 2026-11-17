@@ -44,7 +44,7 @@ Rules confirmed afterwards with the Coastal project lead (Nov 11–14) are in se
 
 | Area | Rule |
 |---|---|
-| Trigger | TOS Lead (`TOS_Lead_Record_Type`) **created** with `HubSpot_Lifecycle_Stage__c = "MQL / Contact"`. That field *is* the HubSpot nurture-MQL flag. Edits never queue a Lead. |
+| Trigger | TOS Lead that has `HubSpot_Lifecycle_Stage__c = "MQL / Contact"` **when it is created, or gets it within 5 minutes of being created** (HubSpot sometimes sends the stage in a follow-up sync, seen in the sandbox on Nov 17, 2026). A Lead is queued once; Leads that become MQL later than 5 minutes are ignored. |
 | Order | Existing `Lead_Assignment` flow runs first, **unchanged** (owner/queue, `Matched_Account__c`, emails). Do **not** add a "skip MQL" condition to it. |
 | Account | TOS record type only. First that finds exactly one Account wins: **exact name → alias → cleaned name → Lead Assignment's match → review**. Main/global Account preferred over site Accounts. Never creates Accounts. |
 | Owner | Lead owner. Queue-owned Lead (CA/MA/UK queues) → the chosen Account's owner. Fallback user alias `cjenn` (Colleen Jennings). |
@@ -105,7 +105,7 @@ sequenceDiagram
 
 | Component | Type | Responsibility |
 |---|---|---|
-| `Lead_Auto_Convert` | Record-triggered flow, Lead, after save, **Create**, async path | Entry filter: stage = `MQL / Contact`, not converted, TOS record type. Calls the queue action. Ships **Draft** in the repo. |
+| `Lead_Auto_Convert` | Record-triggered flow, Lead, after save, **Create and Update**, "only when a record is updated to meet the conditions", async path | Entry filter: stage = `MQL / Contact`, not converted, TOS record type, and `(NOW() - CreatedDate) * 1440 <= 5` (minutes). Calls the queue action. Ships **Draft** in the repo. |
 | `LeadAutoConvertQueueAction` | Invocable Apex | Sets Status to pending (bulk), publishes one start request. No-op when inactive. |
 | `Lead_Auto_Convert_Request__e` | Platform event (HighVolume, PublishAfterCommit), field `Source__c` | The start signal. Exists so the job runs as a fixed user. |
 | `LeadAutoConvertRequestTrigger` | Trigger on the event | No logic; calls the handler. |
@@ -249,6 +249,8 @@ not apply it.
 - **Custom metadata layouts:** Salesforce-generated layouts omit custom fields; both layouts are in the repo. Layouts need `IsProtected` and `NamespacePrefix`.
 - **Retrieving a single Lead field pulls `Lead.object-meta.xml`.** Delete it; deploying it could overwrite Lead settings.
 - **Sandbox user emails end in `.invalid`.** Prove email delivery with the Review Email CC setting.
+- **A flow's async path doesn't run in Apex tests**, so the flow's entry rule (incl. the 5-minute window) is
+  tested live in the sandbox, not by Apex tests.
 - **Custom metadata can't be inserted in tests** – the matcher exposes `aliasOverride`; Settings expose `testRecord`.
 - **Duplicate rules block same-name Accounts in tests** – ambiguity is tested with in-memory records via `matchAll`.
 - **Validation/duplicate error messages come back HTML-encoded** – unescaped before going into Tasks/emails.
@@ -310,7 +312,7 @@ Rollback: untick Active (no deploy). Conversions themselves can't be undone.
 
 | Decision | Alternatives rejected | Why |
 |---|---|---|
-| Create-only trigger on `MQL / Contact` | Also on update to MQL | Client: only new MQLs. Risk: depends on HubSpot setting the value at create. |
+| `MQL / Contact` on create, or within 5 minutes of creation | Create only; any later update to MQL; 1-hour or 10-minute window; a scheduled "wait then check" path | Client: only new MQLs. HubSpot sent the stage 20 s after creating one Lead (Nov 17), so create-only missed it. 5 minutes covers sync delay without picking up old Leads. |
 | Name match before flow match | Flow first | Client prefers main Accounts; flow data had issues (deleted Accounts, wrong domains); reps chose the name match more often. |
 | Cleaned matching in Apex, no stored field | `Match_Name__c` on Account + backfill | Avoids updating ~10k Accounts and firing all Account automation. |
 | Alias list in custom metadata | Hard-coded aliases | Client-maintained, no deploys. |

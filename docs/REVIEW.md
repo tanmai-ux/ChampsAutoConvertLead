@@ -19,7 +19,7 @@
 
 | # | Gap | Action | Owner |
 |---|---|---|---|
-| 1 | HubSpot must set `MQL / Contact` **when it creates the Lead**. Nothing in Salesforce sets it; the sandbox has no example of HubSpot doing so. | Confirm the HubSpot mapping in production; run the read-only check in TESTING.md. | Zach, Kendall |
+| 1 | ~~HubSpot must set `MQL / Contact` when it creates the Lead.~~ **Mitigated Nov 17:** a real HubSpot sync sent the stage 20 s after creating one Lead, so the flow now also accepts it within 5 minutes of creation. Remaining: HubSpot must set it within 5 minutes. Nothing in Salesforce sets it; the sandbox has no example of HubSpot doing so. | Confirm the HubSpot mapping in production; run the read-only check in TESTING.md. | Zach, Kendall |
 | 2 | BD list uploads must never arrive as `MQL / Contact`, or they will convert. | Confirm with HubSpot admins. | Zach, Kendall |
 | 3 | The planned "skip flagged records" condition on Lead Assignment would leave MQLs with no owner or match. | Do not add it. | Spencer |
 | 4 | Production deploys run as the Coastal Cloud user fail the org's existing tests (its Opportunity validation rule blocks them). | Deploy with RunSpecifiedTests (our three test classes), or as another admin. | Coastal |

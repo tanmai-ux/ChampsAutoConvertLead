@@ -36,7 +36,8 @@ how to avoid emailing real people. Results of past runs are in [TESTING.md](TEST
 ### Who can create test Leads
 
 Only admins can edit **HubSpot Lifecycle Stage**. Any admin works: conversion always runs as API User,
-whoever creates the Lead. Set the stage **when the Lead is first saved**; editing it later does nothing (create-only).
+whoever creates the Lead. Set the stage when the Lead is first saved, or **within 5 minutes** of creating it;
+after 5 minutes, setting it does nothing.
 
 ---
 
@@ -84,6 +85,9 @@ Creates fresh, tagged test data (`ACT ... <tag>`) covering every scenario in one
 | S20 | Company "acct name, Inc." | Converted by **cleaned name** |
 | S21 | Company equals an alias | Converted onto the alias's Account |
 | S22 | Company "The acct name LLC" | Converted by **cleaned name** |
+| S23 | Lead created **without** the stage, stage set within 5 minutes (HubSpot's late sync) | Picked up and processed |
+| S24 | Lead created without the stage, stage set **after** 5 minutes | Untouched |
+| S25 | Lead already processed, then edited again (another HubSpot sync) | Not processed a second time |
 
 ### What every converted Lead should show
 
