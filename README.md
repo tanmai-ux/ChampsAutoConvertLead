@@ -46,7 +46,7 @@ right existing Account, and sends anything it can't convert to the Lead owner fo
 | `objects/Lead_Auto_Convert_Setting__mdt` + `customMetadata/...Default` | Admin settings (on/off switch, values) |
 | `standardValueSets/LeadStatus`, `objects/Lead/businessProcesses/TOS` | The two new Lead Status values |
 | `labels/CustomLabels` | Review email wording |
-| `reports/Lead_Auto_Convert` | Monitoring reports: waiting Leads, Leads needing review, MQL Leads not picked up |
+| `reports/Lead_Auto_Convert` | Monitoring reports: waiting Leads, Leads needing review, MQL Leads not picked up, MQL Lead outcomes |
 | `objects/Lead/fields/HubSpot_Lifecycle_Stage__c` | The HubSpot MQL flag field the flow reads |
 
 `deploy/production/` holds the production-only run-as config (usernames differ per org).

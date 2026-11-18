@@ -80,7 +80,7 @@ To retry after fixing the Lead: set its Status back to **Auto-Convert Pending**.
 | `LeadAutoConvertSelector` | All queries |
 | `Lead_Auto_Convert_Setting__mdt` | Admin settings |
 | `Lead_Auto_Convert_Account_Alias__mdt` | Admin alias list |
-| Reports folder **Lead Auto Convert** | *Leads Waiting for Auto-Convert*, *MQL Leads Needing Manual Review*, *MQL Leads Not Picked Up* |
+| Reports folder **Lead Auto Convert** | *Leads Waiting for Auto-Convert*, *MQL Leads Needing Manual Review*, *MQL Leads Not Picked Up*, *MQL Lead Outcomes* (all MQL Leads grouped by result) |
 
 ---
 

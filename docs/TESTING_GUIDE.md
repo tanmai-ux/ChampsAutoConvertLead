@@ -84,6 +84,8 @@ Tips:
 
 Reports → folder **Lead Auto Convert**:
 
+- **MQL Lead Outcomes** – every TOS MQL Lead grouped by what happened: Qualified (converted), Needs Manual
+  Review, Auto-Convert Pending (waiting), Not Contacted/New (never picked up). Filter by Created Date after an import.
 - **Leads Waiting for Auto-Convert** – should be empty, or only minutes old. Anything older means something is stuck.
 - **MQL Leads Needing Manual Review** – Leads waiting for a rep, oldest first.
 - **MQL Leads Not Picked Up** – MQL Leads the automation never touched (for example HubSpot sent the stage more

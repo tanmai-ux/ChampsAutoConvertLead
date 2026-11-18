@@ -122,7 +122,7 @@ sequenceDiagram
 | `LeadStatus` value set, Lead `TOS` business process | Metadata | Adds **Auto-Convert Pending** and **Needs Manual Review**. |
 | `HubSpot_Lifecycle_Stage__c` | Lead field (Text 255) | The flag field (created in the sandbox by Coastal on Oct 15; included so prod deploys don't depend on it). |
 | `CustomLabels` | Labels | `Lead_Auto_Convert_Review_Subject`, `Lead_Auto_Convert_Review_Body` (MessageFormat; no apostrophes). |
-| `reports/Lead_Auto_Convert` | Report folder + 3 reports | *Leads Waiting for Auto-Convert* (should be empty), *MQL Leads Needing Manual Review*, *MQL Leads Not Picked Up* (MQL Leads the automation never touched). |
+| `reports/Lead_Auto_Convert` | Report folder + 4 reports | *Leads Waiting for Auto-Convert* (should be empty), *MQL Leads Needing Manual Review*, *MQL Leads Not Picked Up* (MQL Leads the automation never touched), *MQL Lead Outcomes* (every TOS MQL Lead grouped by Status, converted Leads included). |
 | `deploy/production/` | PlatformEventSubscriberConfig | Runs the trigger as API User in production (username differs per org). |
 
 ---
