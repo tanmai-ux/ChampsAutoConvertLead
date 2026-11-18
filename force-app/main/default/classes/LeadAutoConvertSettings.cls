@@ -49,20 +49,9 @@ public inherited sharing class LeadAutoConvertSettings {
         opportunityStage = record.Opportunity_Stage__c;
         fallbackOwnerAlias = record.Fallback_Owner_Alias__c;
         orgWideEmailAddress = record.Org_Wide_Email_Address__c;
-        if (String.isNotBlank(record.Review_Email_Cc__c)) {
-            for (String address : record.Review_Email_Cc__c.split('[,;\\s]+')) {
-                if (String.isNotBlank(address)) {
-                    reviewCcAddresses.add(address.trim());
-                }
-            }
-        }
+        reviewCcAddresses = splitList(record.Review_Email_Cc__c);
         if (String.isNotBlank(record.Account_Record_Types__c)) {
-            accountRecordTypes = new Set<String>();
-            for (String recordType : record.Account_Record_Types__c.split('[,;\\s]+')) {
-                if (String.isNotBlank(recordType)) {
-                    accountRecordTypes.add(recordType.trim());
-                }
-            }
+            accountRecordTypes = new Set<String>(splitList(record.Account_Record_Types__c));
         }
         if (record.Close_Date_Cutoff_Day__c != null && record.Close_Date_Cutoff_Day__c >= 1) {
             closeDateCutoffDay = record.Close_Date_Cutoff_Day__c.intValue();
@@ -73,6 +62,20 @@ public inherited sharing class LeadAutoConvertSettings {
         if (record.Leads_Per_Run__c != null && record.Leads_Per_Run__c >= 1) {
             leadsPerRun = record.Leads_Per_Run__c.intValue();
         }
+    }
+
+    /** Splits a comma, semicolon or space separated setting into trimmed values. */
+    private static List<String> splitList(String value) {
+        List<String> values = new List<String>();
+        if (String.isBlank(value)) {
+            return values;
+        }
+        for (String part : value.split('[,;\\s]+')) {
+            if (String.isNotBlank(part)) {
+                values.add(part.trim());
+            }
+        }
+        return values;
     }
 
     /**

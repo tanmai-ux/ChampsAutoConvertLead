@@ -86,6 +86,12 @@ case the grace window now covers.
 **Tan Mai (real HubSpot Lead skipped before the change):** re-queued on Nov 17 and converted onto ACT Shared 82195
 (Opportunity 99959-106). Full list of test records: [TEST_RECORDS.md](TEST_RECORDS.md).
 
+### Nov 17, 2026 – re-run after code clean-up (tag 15828)
+
+Small clean-up (comments, test counter, queue-owner check, settings parsing). 39/39 Apex tests pass. Full
+scenario script re-run with email on System only: S1–S12 and S20–S22 all as expected – queue Lead owned by the
+Account owner (Earl Major), existing Contact reused, S10 numbers -100/-101, review reasons correct.
+
 ## 4. Still to do
 
 - **Volume:** ~500-Lead import (45% name match, some domain match, some shared Accounts, rest unmatched)

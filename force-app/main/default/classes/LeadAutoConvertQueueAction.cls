@@ -14,7 +14,7 @@ public without sharing class LeadAutoConvertQueueAction {
 
     @InvocableMethod(
         label='Queue Lead for Auto-Convert'
-        description='Sets the Lead to the pending status and asks for the auto-convert worker, which runs as the Automated Process user.'
+        description='Sets the Lead to the pending status and asks for the auto-convert worker, which runs as the integration user.'
         category='Lead'
     )
     public static void queue(List<Request> requests) {

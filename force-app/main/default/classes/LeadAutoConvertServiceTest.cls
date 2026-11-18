@@ -113,7 +113,7 @@ private class LeadAutoConvertServiceTest {
             Assert.areEqual(owner.Id, tasks[0].OwnerId, 'Task goes to the Lead owner');
             Assert.isTrue(tasks[0].Description.contains('no matching Account'), 'Task explains why: ' + tasks[0].Description);
             Assert.isTrue(tasks[0].Description.contains(String.valueOf(lead.Id)), 'Task links to the Lead');
-            Assert.areEqual(1, LeadAutoConvertNotifier.emailsQueued, 'Owner is emailed');
+            Assert.areEqual(1, LeadAutoConvertNotifier.lastEmails.size(), 'Owner is emailed');
         }
     }
 
@@ -494,7 +494,7 @@ private class LeadAutoConvertServiceTest {
                 'All Leads flagged for review'
             );
             Assert.areEqual(200, [SELECT COUNT() FROM Task WHERE WhoId IN :leadIds], 'One Task per Lead');
-            Assert.areEqual(200, LeadAutoConvertNotifier.emailsQueued, 'One email per Lead');
+            Assert.areEqual(200, LeadAutoConvertNotifier.lastEmails.size(), 'One email per Lead');
             Assert.areEqual(0, [SELECT COUNT() FROM Account WHERE Name LIKE 'LAC Bulk Unmatched%'], 'No Accounts created');
         }
     }

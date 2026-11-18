@@ -7,9 +7,7 @@
  * as a user who can't see the Lead or create Tasks for its owner.
  */
 public without sharing class LeadAutoConvertNotifier {
-    /** How many emails were handed to Messaging, for tests: sandboxes may block delivery. */
-    @TestVisible
-    private static Integer emailsQueued = 0;
+    /** The last emails handed to Messaging, for tests: sandboxes may block delivery. */
     @TestVisible
     private static List<Messaging.SingleEmailMessage> lastEmails = new List<Messaging.SingleEmailMessage>();
 
@@ -96,7 +94,6 @@ public without sharing class LeadAutoConvertNotifier {
         if (emails.isEmpty()) {
             return;
         }
-        emailsQueued += emails.size();
         lastEmails = emails;
         try {
             Messaging.sendEmail(emails, false);

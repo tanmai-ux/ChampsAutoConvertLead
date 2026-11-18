@@ -10,7 +10,8 @@
  * rolled back and RunFailureHandler retries the same Leads in groups half the size.
  * A single Lead that still fails goes to review, so one bad Lead can't block the rest.
  *
- * It is started through requestStart, so it runs as the Automated Process user.
+ * It is started through requestStart, so it runs as the platform event subscriber's
+ * user (API User, set in the PlatformEventSubscriberConfig).
  *
  * Why "without sharing": it must see every waiting Lead whoever owns it.
  */
@@ -41,7 +42,7 @@ public without sharing class LeadAutoConvertWorker implements Queueable {
 
     /**
      * Asks for a worker by publishing a Lead Auto Convert Request instead of
-     * starting one here. Its subscriber runs as the Automated Process user, so the
+     * starting one here. Its subscriber runs as the configured integration user, so the
      * conversion never runs as the user who created the Lead or scheduled the check.
      * The request is sent after the current transaction commits.
      */

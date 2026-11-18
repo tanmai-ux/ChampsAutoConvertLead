@@ -18,7 +18,6 @@
  * the next run. That keeps project numbers unique.
  */
 public without sharing class LeadAutoConvertService {
-    private static final String USER_ID_PREFIX = '005';
     private static final Integer OPPORTUNITY_NAME_MAX = 120;
 
     public enum Result {
@@ -156,7 +155,7 @@ public without sharing class LeadAutoConvertService {
         Id fallbackOwnerId;
         Boolean fallbackLoaded = false;
         for (Item item : active(items)) {
-            if (String.valueOf(item.lead.OwnerId).startsWith(USER_ID_PREFIX)) {
+            if (item.lead.OwnerId.getSObjectType() == User.SObjectType) {
                 item.ownerId = item.lead.OwnerId;
                 continue;
             }
