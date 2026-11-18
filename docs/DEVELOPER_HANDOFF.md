@@ -117,7 +117,31 @@ Aliases: Setup → Custom Metadata Types → **Lead Auto Convert Account Alias**
 
 ---
 
-## 9. Testing
+## 9. Where did a Lead go?
+
+Every TOS MQL Lead ends up in one of these places. Start with the **MQL Lead Outcomes** report
+(folder **Lead Auto Convert**), filtered to the import date.
+
+| What you see | Meaning | What to do |
+|---|---|---|
+| **Qualified** (converted) | Became a Contact and Opportunity. Opportunity Created By = API User means the automation did it. | Nothing |
+| **Needs Manual Review** | No single TOS Account matched, or a Contact conflict. The reason is on the Lead's Task. | Fix and convert by hand, or fix the Company and set Status to Auto-Convert Pending |
+| **Auto-Convert Pending** | Waiting; normally clears within seconds | If older than a few minutes, check the *Leads Waiting for Auto-Convert* report and Apex Jobs |
+| **Not Contacted/New** with MQL / Contact | Never picked up: the stage arrived more than 1 minute after creation, or auto-convert was off | *MQL Leads Not Picked Up* report; convert or re-queue |
+| **Not in Salesforce at all** | HubSpot never created the Lead, so the automation never saw it | Check HubSpot (below) |
+
+**HubSpot contacts that never reach Salesforce.** On Nov 17, 2026 HubSpot sent 5 of 9 imported test contacts;
+the other 4 never arrived and no Salesforce automation ran for them. Salesforce keeps no record of a
+create it rejected, so check HubSpot:
+
+- HubSpot → Settings → Integrations → Salesforce → **Sync Health** (sync errors), or the **Salesforce sync**
+  card on the contact.
+- Most likely cause: the **Lead and Contact duplicate rules block** any new Lead whose email already exists on
+  another Lead or Contact (error `DUPLICATES_DETECTED`). Re-imported or reused test emails hit this.
+- Other causes: validation rules (for example a referral Lead Source without Referred By), the contact not
+  being in HubSpot's sync list, or HubSpot updating an existing Salesforce record instead of creating a Lead.
+
+## 10. Testing
 
 - **Apex:** 39 tests, all passing. Run the three `LeadAutoConvert*Test` classes.
 - **The flow's entry rule can't be unit tested:** Salesforce doesn't run a flow's async path inside Apex tests.
@@ -127,7 +151,7 @@ Aliases: Setup → Custom Metadata Types → **Lead Auto Convert Account Alias**
 
 ---
 
-## 10. Open items
+## 11. Open items
 
 | Item | Owner |
 |---|---|
@@ -135,5 +159,6 @@ Aliases: Setup → Custom Metadata Types → **Lead Auto Convert Account Alias**
 | Confirm BD list uploads never arrive as `MQL / Contact` | Zach, Kendall |
 | Opportunity naming for Accounts without an Account Number | Champions |
 | Add aliases (BMS, GSK, Lilly, DCB, IRB Barcelona) | Champions admin |
+| Find why 4 of 9 HubSpot test contacts never synced (Nov 17) – check HubSpot Sync Health | Zach, Kendall |
 | Production go-live ([DEPLOYMENT.md](DEPLOYMENT.md)) | Coastal |
 | Clean up sandbox test data (`ACT …` records) | Coastal |

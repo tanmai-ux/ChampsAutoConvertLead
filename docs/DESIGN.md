@@ -95,6 +95,10 @@ Fallback Owner Alias, Org-Wide Email Address, Review Email CC.
 
 ## Known risks
 
+- **HubSpot sync rejections:** HubSpot can fail to create a Lead (duplicate rules block a second record with the
+  same email; validation rules; sync list). Those contacts never reach Salesforce, so the automation never sees
+  them. Seen on Nov 17, 2026: 4 of 9 test contacts didn't sync. Monitor HubSpot's Sync Health.
+
 - **HubSpot timing:** handled by the 1-minute grace window. A stage that arrives more than 1 minute after
   creation is still missed; those Leads appear in the **MQL Leads Not Picked Up** report. Field history on
   HubSpot Lifecycle Stage would show when the stage arrived.

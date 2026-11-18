@@ -91,13 +91,20 @@ Reports → folder **Lead Auto Convert**:
 - **MQL Leads Not Picked Up** – MQL Leads the automation never touched (for example HubSpot sent the stage more
   than 1 minute after creating the Lead, or auto-convert was off). Convert them by hand or re-queue them.
 
-## 7. Not testable in the sandbox
+## 7. A Lead is missing
+
+If a HubSpot contact doesn't appear in the **MQL Lead Outcomes** report at all, it never reached Salesforce.
+Check HubSpot → Settings → Integrations → Salesforce → **Sync Health**, or the contact's **Salesforce sync** card.
+The usual cause is a duplicate: Salesforce blocks a new Lead whose email already exists on a Lead or Contact,
+so **use a new email address for every test contact**.
+
+## 8. Not testable in the sandbox
 
 - **The real HubSpot sync** only works where HubSpot is connected (production, or a connected sandbox). In
   this guide, creating a Lead with `MQL / Contact` stands in for HubSpot.
 - **Emails to real users:** sandbox user emails end in `.invalid`; use **Review Email CC** to see review emails.
 
-## 8. Clean-up
+## 9. Clean-up
 
 Delete your `QA …` Leads and any Contacts/Opportunities they created when testing is signed off.
 
