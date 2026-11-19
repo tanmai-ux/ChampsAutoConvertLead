@@ -24,7 +24,7 @@
 | 3 | The planned "skip flagged records" condition on Lead Assignment would leave MQLs with no owner or match. | Do not add it. | Spencer |
 | 4 | Production deploys run as the Coastal Cloud user fail the org's existing tests (its Opportunity validation rule blocks them). | Deploy with RunSpecifiedTests (our three test classes), or as another admin. | Coastal |
 | 5 | `LeadStatus` and the TOS Lead Process are deployed as full lists from the July sandbox copy; production may differ. | Retrieve both from production first and merge in the two new values. | Coastal |
-| 1b | 4 of 9 HubSpot test contacts never reached Salesforce (Nov 17). Likely the duplicate rules blocking a reused email. | Check HubSpot Sync Health; use unique emails in tests. | Zach, Kendall |
+| 1b | 4 of 9 HubSpot test contacts never reached Salesforce (Nov 17). Likely the Lead duplicate rule blocking an email already on another Lead (confirmed by simulation: `DUPLICATES_DETECTED`). | Check HubSpot Sync Health; use unique emails in tests. | Zach, Kendall |
 | 6 | ~~Review email delivery not yet proven (S13).~~ **Done:** delivered to the project lead's inbox via Review Email CC. | — | — |
 
 ### Should do (best practice)
@@ -33,7 +33,7 @@
 |---|---|---|
 | 7 | Monitoring needs someone watching. | Subscribe an admin to *Leads Waiting for Auto-Convert* with the condition Record Count > 0 (Setup can't deploy subscriptions). |
 | 8 | API User is a full System Administrator, and its username suggests a person (`mweinstein`). If it is deactivated, conversion stops. | Move to a dedicated integration user with a permission set; free Salesforce Integration licenses are available. |
-| 9 | 59% of TOS Accounts have no Account Number, so the existing naming flow names their Opportunities like "-100 Company". | Client decision: backfill Account Numbers or adjust the naming flow. Not caused by this build. |
+| 9 | ~~59% of TOS Accounts have no Account Number.~~ **Decided Nov 19:** create the Opportunity anyway. The existing naming flow names it like "-100 Company" (Project "-100"); verified live. | — |
 | 10 | Long outages drain slowly: a failed job can re-queue itself only 5 times in a row, then the hourly check takes over (about one Lead per hour to review). | Covered by monitoring (#7). Optional: have the hourly check email an admin when Leads wait more than an hour. |
 | 11 | ~~Exact name matching misses variants.~~ **Done Nov 14:** cleaned-name matching (29% to 44.5% of sandbox TOS Leads) and an admin alias list. | Client adds aliases for abbreviations seen in review (BMS, GSK, Lilly, DCB, IRB Barcelona). Fuzzy suggestions on review Tasks remain an option. |
 | 12 | No permanent error log; reasons live on review Tasks and background job records (kept for a limited time). | Optional log object if the client wants an audit trail. |

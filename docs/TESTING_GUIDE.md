@@ -95,7 +95,7 @@ Reports → folder **Lead Auto Convert**:
 
 If a HubSpot contact doesn't appear in the **MQL Lead Outcomes** report at all, it never reached Salesforce.
 Check HubSpot → Settings → Integrations → Salesforce → **Sync Health**, or the contact's **Salesforce sync** card.
-The usual cause is a duplicate: Salesforce blocks a new Lead whose email already exists on a Lead or Contact,
+The usual cause is a duplicate: Salesforce blocks a new Lead whose email already exists on another Lead,
 so **use a new email address for every test contact**.
 
 ## 8. Not testable in the sandbox
@@ -115,6 +115,7 @@ Delete your `QA …` Leads and any Contacts/Opportunities they created when test
 - **Apex tests (39):**
   `sf apex run test -o champsDev -n LeadAutoConvertServiceTest -n LeadAutoConvertWorkerTest -n LeadAutoConvertAccountMatcherTest -w 20`
 - **Full scripted run:** `sf apex run -o champsDev -f scripts/apex/lead-auto-convert-scenarios.apex` (email off first).
+- **HubSpot sync simulation (70 checks, about 3 minutes):** `python scripts/hubspot-sync-simulation.py champsDev` (email off first).
 - **Start the job now** (instead of waiting for the hourly check): Anonymous Apex `LeadAutoConvertWorker.requestStart('QA');`
 - **The flow's 1-minute rule can't be unit tested** (async flow paths don't run in Apex tests) – QA-12/13 cover it.
 - **Edits from the CLI/REST API** run Lead assignment rules and can change the owner; use the UI or Apex.

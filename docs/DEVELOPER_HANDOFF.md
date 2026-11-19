@@ -136,8 +136,9 @@ create it rejected, so check HubSpot:
 
 - HubSpot → Settings → Integrations → Salesforce → **Sync Health** (sync errors), or the **Salesforce sync**
   card on the contact.
-- Most likely cause: the **Lead and Contact duplicate rules block** any new Lead whose email already exists on
-  another Lead or Contact (error `DUPLICATES_DETECTED`). Re-imported or reused test emails hit this.
+- Most likely cause: the **Lead duplicate rule blocks** a new Lead whose email already exists on another
+  **Lead** (error `DUPLICATES_DETECTED`). Re-imported or reused test emails hit this. (A Lead whose email
+  matches a **Contact** is allowed; the automation then reuses that Contact or sends the Lead to review.)
 - Other causes: validation rules (for example a referral Lead Source without Referred By), the contact not
   being in HubSpot's sync list, or HubSpot updating an existing Salesforce record instead of creating a Lead.
 
@@ -147,6 +148,9 @@ create it rejected, so check HubSpot:
 - **The flow's entry rule can't be unit tested:** Salesforce doesn't run a flow's async path inside Apex tests.
   Test it live: create a Lead without the stage, then set it within 1 minute (and after 1 minute).
 - **Scenarios:** `scripts/apex/lead-auto-convert-scenarios.apex` creates fresh test data for every case.
+- **HubSpot sync simulation:** `python scripts/hubspot-sync-simulation.py champsDev` creates Leads through the
+  REST API in batches the way the HubSpot connector does (stage on create, stage 20 s / 80 s later, re-syncs,
+  duplicate emails, a 50-Lead batch) and checks all 70 results. Email must be on System only first.
 - **Results and step-by-step guide:** [TESTING.md](TESTING.md), [TESTING_GUIDE.md](TESTING_GUIDE.md).
 
 ---
@@ -157,7 +161,6 @@ create it rejected, so check HubSpot:
 |---|---|
 | Confirm HubSpot sets `MQL / Contact` within 1 minute of creating the Lead in production (20 s seen in the sandbox); watch the *MQL Leads Not Picked Up* report after go-live | Zach, Kendall, admin |
 | Confirm BD list uploads never arrive as `MQL / Contact` | Zach, Kendall |
-| Opportunity naming for Accounts without an Account Number | Champions |
 | Add aliases (BMS, GSK, Lilly, DCB, IRB Barcelona) | Champions admin |
 | Find why 4 of 9 HubSpot test contacts never synced (Nov 17) – check HubSpot Sync Health | Zach, Kendall |
 | Production go-live ([DEPLOYMENT.md](DEPLOYMENT.md)) | Coastal |

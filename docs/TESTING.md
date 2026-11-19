@@ -92,6 +92,33 @@ Small clean-up (comments, test counter, queue-owner check, settings parsing). 39
 scenario script re-run with email on System only: S1–S12 and S20–S22 all as expected – queue Lead owned by the
 Account owner (Earl Major), existing Contact reused, S10 numbers -100/-101, review reasons correct.
 
+### Nov 18, 2026 – HubSpot sync simulation (tag 17620): 70/70 passed
+
+`scripts/hubspot-sync-simulation.py` writes Leads through the REST API in batches, as the HubSpot connector
+does, with sandbox email on System only. All 34 worker jobs completed; none failed.
+
+| # | What HubSpot does | Result |
+|---|---|---|
+| H1 | Batch of 10 Leads, stage set on create (exact name, same Account twice, "…, Inc.", "The … LLC", unmatched, queue Lead, Hospital name, stage typed `MQL/Contact`, no stage) | All as expected: 6 converted, 2 to review, 2 left alone. `MQL/Contact` (no spaces) is **ignored** – the value must be exactly `MQL / Contact`. |
+| H2 | Batch created without the stage, stage sent ~20 s later | Picked up: 2 converted, 1 to review |
+| H3 | Stage sent 80 s after create | Ignored (Not Picked Up report) |
+| H4 | Created with stage `Lead`, changed to `MQL / Contact` ~20 s later | Converted |
+| H5 | Re-sync of a review Lead (Title and stage sent again) | Stayed in review; no second Task |
+| H5 | Re-sync of a converted Lead | Salesforce rejects it (`CANNOT_UPDATE_CONVERTED_LEAD`); HubSpot must sync to the Contact after conversion |
+| H6 | New Lead whose email is already on a **Contact** | Allowed by the duplicate rules; converted and **reused** that Contact |
+| H6 | New Lead whose email is already on another **Lead** | **Rejected** (`DUPLICATES_DETECTED`) – the Lead never reaches Salesforce. This matches the 4 HubSpot contacts that never synced on Nov 17. |
+| H7 | One batch of 50 Leads, 5 per Account across 10 Accounts | All 50 converted; numbers -100 to -104 on each Account, all 60 Opportunity numbers in the run unique |
+
+Every converted Opportunity: API User, Proposed, $1, TOS, Principal Investigator set; Contacts record type
+General; the queue Lead's records owned by the Account owner. Not covered: the Leads are created by the
+CLI user, not the Hubspot Integration user (the flow and worker don't depend on who creates the Lead).
+
+### Nov 19, 2026 – Account without an Account Number
+
+Decision: convert and create the Opportunity anyway. TOS Account "ACT No Number 33107" (no Account Number) and
+an MQL Lead: converted by API User; Opportunity **-100 ACT No Number 33107** (Project -100, sequence 100),
+Proposed, $1.
+
 ## 4. Still to do
 
 - **Volume:** ~500-Lead import (45% name match, some domain match, some shared Accounts, rest unmatched)
